@@ -107,7 +107,7 @@ public extension UIDevice {
         current.identifierForVendor?.uuidString
     }
     
-    nonisolated static var deviceIdentifier: String = {
+    static var deviceIdentifier: String = {
         var systemInfo = utsname()
         uname(&systemInfo)
         
