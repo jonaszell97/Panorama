@@ -1,6 +1,10 @@
 
 import SwiftUI
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 public enum OpenURLActionResult {
     case handled
     case discarded
@@ -37,3 +41,24 @@ public extension View {
         }
     }
 }
+
+// MARK: Share sheet
+
+#if canImport(UIKit)
+
+public func displayShareSheet(itemsToShare: [Any], sourceRect: CGRect? = nil) {
+    guard let rootController = UIApplication.shared.windows.first?.rootViewController else {
+        return
+    }
+    
+    let activityViewController = UIActivityViewController(activityItems: itemsToShare,
+                                                          applicationActivities: nil)
+    
+    activityViewController.popoverPresentationController?.sourceView = rootController.view
+    activityViewController.popoverPresentationController?.sourceRect = sourceRect ??
+        .init(x: UIScreen.main.bounds.width*0.5, y: UIScreen.main.bounds.height*0.5, width: 0, height: 0)
+    
+    rootController.present(activityViewController, animated: true, completion: nil)
+}
+
+#endif

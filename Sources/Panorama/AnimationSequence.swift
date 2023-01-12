@@ -2,9 +2,13 @@
 import SwiftUI
 import Toolbox
 
+#if DEBUG
+
 fileprivate extension Log {
     static var animationSequence = Toolbox.Logger(subsystem: "com.jonaszell.AppUtilities", category: "AnimationSequence")
 }
+
+#endif
 
 /// An animation sequence allows the execution of several animation steps (and other functions) one after the other with
 /// specifiable timing.
@@ -85,7 +89,9 @@ public class AnimationSequence {
             return
         }
         
+        #if DEBUG
         Log.animationSequence.warning("AnimationSequence \(ObjectIdentifier(self).debugDescription) went out of scope without being executed")
+        #endif
     }
     
     /// Append an action.

@@ -1,6 +1,10 @@
 
 import SwiftUI
 
+#if canImport(UIKit)
+import UIKit
+#endif
+
 public struct EmptyButtonStyle: ButtonStyle {
     public init() {
         
@@ -127,3 +131,31 @@ public extension View {
         })
     }
 }
+
+// MARK: VisualEffectView
+
+#if canImport(UIKit)
+
+/// Allows using UIVisualEffect in SwiftUI.
+public struct VisualEffectView: UIViewRepresentable {
+    var effect: UIVisualEffect?
+    
+    public init(effect: UIVisualEffect? = nil) {
+        self.effect = effect
+    }
+    
+    public func makeUIView(context: UIViewRepresentableContext<Self>) -> UIVisualEffectView { UIVisualEffectView()
+    }
+    
+    public func updateUIView(_ uiView: UIVisualEffectView, context: UIViewRepresentableContext<Self>) { uiView.effect = effect
+    }
+}
+
+public extension View {
+    /// Applies a UIBlurEffect to the background of this view.
+    func blurredBackground(style: UIBlurEffect.Style) -> some View {
+        self.background(VisualEffectView(effect: UIBlurEffect(style: style)))
+    }
+}
+
+#endif

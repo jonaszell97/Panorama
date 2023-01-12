@@ -282,3 +282,50 @@ extension CodableShape: Codable {
         self.init(unitPath: try container.decode(Path.self))
     }
 }
+
+// MARK: ColorScheme
+
+extension ColorScheme: Codable, RawRepresentable {
+    public enum RawValueType: String, Codable {
+        case dark, light, unknown
+    }
+    
+    public var rawValue: RawValueType {
+        switch self {
+        case .light:
+            return .light
+        case .dark:
+            return .dark
+        @unknown default:
+            return .unknown
+        }
+    }
+    
+    public init?(rawValue: RawValueType) {
+        switch rawValue {
+        case .light:
+            self = .light
+        case .dark:
+            self = .dark
+        case .unknown:
+            return nil
+        }
+    }
+    
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(self.rawValue)
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let rawValue = try container.decode(RawValue.self)
+        
+        guard let this = ColorScheme(rawValue: rawValue) else {
+            throw DecodingError.dataCorrupted(.init(codingPath: container.codingPath,
+                                                    debugDescription: "unknown raw value for ColorScheme: \(rawValue)"))
+        }
+        
+        self = this
+    }
+}
