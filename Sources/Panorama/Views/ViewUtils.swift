@@ -62,6 +62,14 @@ public extension View {
             }
         }
     }
+    
+    /// A combination of the `onAppear` and `onChange` modifiers.
+    func onAppearOrChange<T>(of value: T, perform action: @escaping (T) -> Void)
+        -> some View where T: Equatable
+    {
+        self.onAppear { action(value) }
+            .onChange(of: value) { action($0) }
+    }
 }
 
 fileprivate struct RelativeOffsetView<Content: View>: View {
