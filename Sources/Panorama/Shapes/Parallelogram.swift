@@ -1,6 +1,7 @@
 
 import SwiftUI
 
+/// A parallelogram shape with a customizable edge offset.
 public struct Parallelogram: Shape {
     var edgeOffset: CGFloat
     
@@ -18,6 +19,9 @@ public struct Parallelogram: Shape {
         ]
     }
     
+    /// Create a parallelogram shape.
+    ///
+    /// - Parameter edgeOffset: The horizontal edge offset of the upper right corner.
     public init(edgeOffset: CGFloat) {
         self.edgeOffset = edgeOffset
     }

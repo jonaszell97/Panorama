@@ -1,6 +1,7 @@
 
 import SwiftUI
 
+/// A hexagonal shape with rounded corners.
 public struct RoundedHexagon: Shape {
     var cornerAdjustment: CGFloat
     
@@ -9,6 +10,9 @@ public struct RoundedHexagon: Shape {
         set { cornerAdjustment = newValue }
     }
     
+    /// Create a hexagon with the given corner radius.
+    ///
+    /// - Parameter cornerAdjustment: The corner radius.
     public init(cornerAdjustment: CGFloat) {
         self.cornerAdjustment = cornerAdjustment
     }

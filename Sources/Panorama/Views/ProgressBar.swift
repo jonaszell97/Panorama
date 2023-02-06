@@ -2,6 +2,17 @@
 import SwiftUI
 import Toolbox
 
+/// A customizable progress bar view.
+///
+/// The `ProgressBar` is displayed as a pill-shaped bar that fills from left to right based on the current
+/// the progress percentage. Additionally, the percentage is displayed as text over the progress bar shape.
+///
+/// The following example shows the usage of a `ProgressBar`:
+/// ```swift
+/// ProgressBar(backgroundColor: .gray, foregroundColor: .cyan,
+///             size: .init(width: 250, height: 30), progress: progress)
+/// ```
+/// ![A progress bar view.](ProgressBar)
 public struct ProgressBar: View {
     struct RectangleProgressShape: Shape, Animatable {
         var animatableData: CGFloat
@@ -30,7 +41,13 @@ public struct ProgressBar: View {
     /// The current progress percentage in interval [0,1].
     let progress: Double
     
-    /// Public initializer.
+    /// Create a progress bar.
+    ///
+    /// - Parameters:
+    ///   - backgroundColor: The color of the unfilled portion of the progress bar.
+    ///   - foregroundColor: The color of the filled portion of the progress bar.
+    ///   - size: The size of the progress bar.
+    ///   - progress: The current progress percentage in [0, 1].
     public init(backgroundColor: Color, foregroundColor: Color, size: CGSize, progress: Double) {
         self.backgroundColor = backgroundColor
         self.foregroundColor = foregroundColor
@@ -59,7 +76,8 @@ public struct ProgressBar: View {
     }
 }
 
-fileprivate struct ProgressBar_Previewsss: PreviewProvider {
+@available(iOS 15, *)
+struct ProgressBar_Previewsss: PreviewProvider {
     struct PreviewView: View {
         @State var progress: Double = 0
         
@@ -73,7 +91,8 @@ fileprivate struct ProgressBar_Previewsss: PreviewProvider {
         }
         
         var body: some View {
-            ProgressBar(backgroundColor: .gray, foregroundColor: .blue, size: .init(width: 250, height: 30), progress: progress)
+            ProgressBar(backgroundColor: .gray, foregroundColor: .cyan,
+                        size: .init(width: 250, height: 30), progress: progress)
                 .onAppear {
                     self.increase()
                 }

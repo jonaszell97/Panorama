@@ -5,6 +5,7 @@ import SwiftUI
 import UIKit
 #endif
 
+/// A result of opening a URL.
 public enum OpenURLActionResult {
     case handled
     case discarded
@@ -28,6 +29,7 @@ fileprivate extension OpenURLActionResult {
 }
 
 public extension View {
+    /// Install the URL opening callback if available.
     func openURL(_ action: @escaping (URL) -> OpenURLActionResult) -> some View {
         ZStack {
             if #available(iOS 15, macOS 12, *) {
@@ -46,6 +48,11 @@ public extension View {
 
 #if canImport(UIKit)
 
+/// Display the system share sheet with the given items.
+/// 
+/// - Parameters:
+///   - itemsToShare: The items to share.
+///   - sourceRect: The dimensions of the share sheet rect, or `nil` if they should be determined automatically.
 public func displayShareSheet(itemsToShare: [Any], sourceRect: CGRect? = nil) {
     guard let rootController = UIApplication.shared.windows.first?.rootViewController else {
         return

@@ -5,6 +5,7 @@ import Toolbox
 import UIKit
 #endif
 
+/// Wrapper type for icons that can be either SF symbols, custom images, or text.
 public enum IconWrapper {
     /// A system icon.
     case System(systemName: String, rotation: Angle = .zero, scale: CGFloat = 1)
@@ -36,6 +37,7 @@ public extension IconWrapper {
     }
 }
 
+/// View representation of an `IconWrapper`.
 public struct IconWrapperView: View {
     /// The icon this view is for.
     let icon: IconWrapper

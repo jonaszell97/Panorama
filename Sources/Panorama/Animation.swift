@@ -3,6 +3,7 @@ import enum Accelerate.vDSP
 import SwiftUI
 import Toolbox
 
+/// An animatable vector of multiple floating point values.
 public struct AnimatableVector: VectorArithmetic {
     public static var zero = AnimatableVector(values: [0.0])
     
@@ -30,6 +31,9 @@ public struct AnimatableVector: VectorArithmetic {
     
     public var values: [Double]
     
+    /// Create a vector with the given values.
+    ///
+    /// - Parameter values: The values in this vector.
     public init(values: [Double]) {
         self.values = values
     }
@@ -74,11 +78,18 @@ extension CGPoint: VectorArithmetic {
 extension CGSize: VectorArithmetic {
 }
 
+/// An animatable tuple of three values.
 public struct AnimatableTuple3<A: VectorArithmetic, B: VectorArithmetic, C: VectorArithmetic>: VectorArithmetic {
     public var first: A
     public var second: B
     public var third: C
     
+    /// Create an animatable tuple.
+    ///
+    /// - Parameters:
+    ///   - first: The first value.
+    ///   - second: The second value.
+    ///   - third: The third value.
     public init(_ first: A, _ second: B, _ third: C) {
         self.first = first
         self.second = second
@@ -122,12 +133,20 @@ public struct AnimatableTuple3<A: VectorArithmetic, B: VectorArithmetic, C: Vect
     }
 }
 
+/// An animatable tuple of four values.
 public struct AnimatableTuple4<A: VectorArithmetic, B: VectorArithmetic, C: VectorArithmetic, D: VectorArithmetic>: VectorArithmetic {
     public var first: A
     public var second: B
     public var third: C
     public var fourth: D
     
+    /// Create an animatable tuple.
+    ///
+    /// - Parameters:
+    ///   - first: The first value.
+    ///   - second: The second value.
+    ///   - third: The third value.
+    ///   - fourth: The fourth value.
     public init(_ first: A, _ second: B, _ third: C, _ fourth: D) {
         self.first = first
         self.second = second

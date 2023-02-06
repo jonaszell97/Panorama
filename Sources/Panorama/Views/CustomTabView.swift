@@ -50,15 +50,48 @@ fileprivate func tabIndicatorView(_ index: Int, itemCount: Int, style: TabIndica
     .background(Rectangle().fill(.clear).edgesIgnoringSafeArea(.all))
 }
 
+/// The position of the tab view indicator.
 public enum TabIndicatorPosition {
     case top, bottom
 }
 
+/// The style of the tab view indicator.
 public enum TabIndicatorStyle {
     case rectangle(width: CGFloat = 20, height: CGFloat = 8, color: Color)
     case circle(radius: CGFloat = 8, color: Color)
 }
 
+/// Provides an alternative to SwiftUI's `TabView().tabViewStyle(.page)` with customizable animations,
+/// gestures, and callbacks.
+///
+/// The following example shows the usage of `CustomTabView`:
+/// ```swift
+/// CustomTabView(itemCount: 3, index: .init(get: { index }, set: { index = $0}),
+///               navigationEnabled: true,
+///               tabIndicatorStyle: .circle(color: .black)) {
+///     ZStack {
+///         Text("Tab 1")
+///     }
+///     .frame(minWidth: UIScreen.main.bounds.width, maxHeight: .infinity)
+///     .background(Color.red.opacity(0.1))
+///     .tag(0)
+///
+///     ZStack {
+///         Text("Tab 2")
+///     }
+///     .frame(minWidth: UIScreen.main.bounds.width, maxHeight: .infinity)
+///     .background(Color.green.opacity(0.1))
+///     .tag(1)
+///
+///     ZStack {
+///         Text("Tab 3")
+///     }
+///     .frame(minWidth: UIScreen.main.bounds.width, maxHeight: .infinity)
+///     .background(Color.blue.opacity(0.1))
+///     .tag(2)
+/// }
+/// ```
+/// ![A custom tab view with 3 tabs.](CustomTabView)
 public struct CustomTabView<Content: View>: View {
     /// The view content.
     let content: Content
@@ -114,7 +147,17 @@ public struct CustomTabView<Content: View>: View {
         return itemWidth / 3.0
     }
     
-    /// Initialize this scroll view, optionally starting at a specific item.
+    /// Create a tab view.
+    ///
+    /// - Parameters:
+    ///   - itemCount: The number of tabs.
+    ///   - index: The index of the currently selected tab.
+    ///   - navigationEnabled: Whether gestural navigation between pages is enabled.
+    ///   - tabIndicatorStyle: The style of the tab indicator.
+    ///   - tabIndicatorPosition: The position of the tab indicator.
+    ///   - transitionAnimationDuration: The duration of the transition animation when switching tabs.
+    ///   - content: Closure to build the tab content. This builder must generate `itemCount` views of equal width
+    ///    with no spacing inbetween.
     public init (itemCount: Int,
                  index: Binding<Int>,
                  navigationEnabled: Bool = true,
@@ -384,34 +427,32 @@ struct PageViewPreviews: PreviewProvider {
     static var previews: some View {
         var index = 0
         let width = UIScreen.main.bounds.width
-        let height = UIScreen.main.bounds.height * 0.5
-        
         return VStack {
-            CustomTabView(itemCount: 3, index: .init(get: { index }, set: { index = $0}), navigationEnabled: true,
+            CustomTabView(itemCount: 3, index: .init(get: { index }, set: { index = $0}),
+                          navigationEnabled: true,
                           tabIndicatorStyle: .circle(color: .black)) {
                 ZStack {
-                    Text("Hello")
+                    Text("Tab 1")
                 }
                 .frame(minWidth: width, maxHeight: .infinity)
                 .background(Color.red.opacity(0.1))
                 .tag(0)
                 
                 ZStack {
-                    Text("Hello2")
+                    Text("Tab 2")
                 }
-                .frame(minWidth: width, minHeight: height)
+                .frame(minWidth: width, maxHeight: .infinity)
                 .background(Color.green.opacity(0.1))
                 .tag(1)
                 
                 ZStack {
-                    Text("Hello3")
+                    Text("Tab 3")
                 }
-                .frame(minWidth: width)
+                .frame(minWidth: width, maxHeight: .infinity)
                 .background(Color.blue.opacity(0.1))
                 .tag(2)
             }
         }
-        .background(Color.orange.opacity(0.2))
     }
 }
 
