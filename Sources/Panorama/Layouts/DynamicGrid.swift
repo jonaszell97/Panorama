@@ -17,18 +17,54 @@ public struct _DynamicGridLayoutCache {
     var totalHeight: CGFloat = 0
 }
 
+/// A row-first grid layout that supports subviews with varying heights and widths.
+///
+/// `DynamicGrid` organizes its subviews in rows. Each row has a maximum width provided by the parent container
+/// When there is not enough horizontal space remaining to place the next item in a row, the item is placed in the next row.
+/// The height of any given row is defined by its tallest subview.
+///
+/// The alignment of subviews within a row can be specified using the `alignment` parameter. Additionally, the
+/// horizontal spacing between elements within a row can be defined with the `horizontalSpacing` parameter, and the
+/// vertical spacing between rows with the `verticalSpacing` parameter.
+///
+/// The following example shows the layout created by a `DynamicGrid` with a center `alignment`:
+/// ```swift
+///     DynamicGrid(alignment: .center) {
+///         // ...
+///     }
+///     .frame(maxWidth: 150)
+/// ```
+/// ![DynamicGrid with center alignment](DynamicGrid_CenterAlignment)
+///
+/// The same grid would look like the following with leading `alignment`:
+/// ```swift
+///     DynamicGrid(alignment: .leading) {
+///         // ...
+///     }
+///     .frame(maxWidth: 150)
+/// ```
+/// ![DynamicGrid with leading alignment](DynamicGrid_LeadingAlignment)
 @available(iOS 16, macOS 13, *)
 public struct DynamicGrid: Layout {
-    /// The alignment of the grid.
+    /// The alignment of subviews within a single row of the grid.
     let alignment: HorizontalAlignment
     
-    /// The spacing between elements.
-    let spacing: CGFloat
+    /// The horizontal spacing between elements within  a row.
+    let horizontalSpacing: CGFloat
     
-    /// Default initializer.
-    public init(alignment: HorizontalAlignment = .center, spacing: CGFloat = 10) {
+    /// The vertical spacing between rows.
+    let verticalSpacing: CGFloat
+    
+    /// Create a `DynamicGrid` with specified alignment and spacing.
+    ///
+    /// - Parameters:
+    ///   - alignment: The horizontal alignment of elements within a single row.
+    ///   - horizontalSpacing: The horizontal spacing between row elements.
+    ///   - verticalSpacing: The vertical spacing between rows.
+    public init(alignment: HorizontalAlignment = .center, horizontalSpacing: CGFloat = 10, verticalSpacing: CGFloat = 10) {
         self.alignment = alignment
-        self.spacing = spacing
+        self.horizontalSpacing = horizontalSpacing
+        self.verticalSpacing = verticalSpacing
     }
     
     public static var layoutProperties: LayoutProperties {
@@ -61,7 +97,7 @@ public struct DynamicGrid: Layout {
             
             // Add spacing for every view but the first
             if currentRowWidth > 0 {
-                subviewWidthWithSpacing = subviewWidth + self.spacing
+                subviewWidthWithSpacing = subviewWidth + self.horizontalSpacing
             }
             else {
                 subviewWidthWithSpacing = subviewWidth
@@ -71,7 +107,7 @@ public struct DynamicGrid: Layout {
             
             // View can fit on this row
             if currentRowWidth + subviewWidthWithSpacing <= proposalWidth {
-                currentRow.append((i, subviewWidth + self.spacing))
+                currentRow.append((i, subviewWidth + self.horizontalSpacing))
                 currentRowWidth += subviewWidthWithSpacing
                 currentRowHeight = max(currentRowHeight, subviewHeight)
             }
@@ -80,7 +116,7 @@ public struct DynamicGrid: Layout {
                 cache.rows.append(.init(subviewIndices: currentRow, size: .init(width: currentRowWidth, height: currentRowHeight)))
                 cache.totalHeight += currentRowHeight
                 
-                currentRow = [(i, subviewWidth + self.spacing)]
+                currentRow = [(i, subviewWidth + self.horizontalSpacing)]
                 currentRowWidth = subviewWidth
                 currentRowHeight = subviewHeight
             }
@@ -93,14 +129,14 @@ public struct DynamicGrid: Layout {
         
         // Add vertical spacing
         if !cache.rows.isEmpty {
-            cache.totalHeight += CGFloat(cache.rows.count - 1) * self.spacing
+            cache.totalHeight += CGFloat(cache.rows.count - 1) * self.verticalSpacing
         }
         
         return .init(width: proposalWidth, height: cache.totalHeight)
     }
     
     public func placeSubviews(in bounds: CGRect, proposal: ProposedViewSize, subviews: Subviews, cache: inout _DynamicGridLayoutCache) {
-        var currentVerticalOffset: CGFloat = bounds.origin.y // - (bounds.height - (proposal.height ?? bounds.height))
+        var currentVerticalOffset: CGFloat = bounds.origin.y
         for row in cache.rows {
             var currentHorizontalOffset: CGFloat = bounds.minX
             switch self.alignment {
@@ -122,7 +158,7 @@ public struct DynamicGrid: Layout {
             }
             
             currentVerticalOffset += row.size.height
-            currentVerticalOffset += self.spacing
+            currentVerticalOffset += self.verticalSpacing
         }
     }
     
@@ -143,7 +179,7 @@ struct DynamicGridPreviews: PreviewProvider {
             Text(verbatim: text)
                 .foregroundColor(.white)
                 .lineLimit(1)
-//                .fixedSize(horizontal: true, vertical: true)
+                .fixedSize(horizontal: false, vertical: true)
                 .padding(.vertical, 5)
                 .padding(.horizontal)
                 .background(
@@ -157,20 +193,19 @@ struct DynamicGridPreviews: PreviewProvider {
         var body: some View {
             VStack {
                 Spacer()
-                DynamicGrid(alignment: .leading) {
-                    TagView(text: "X")
-                    TagView(text: "Y")
-                    TagView(text: "Z")
-                    TagView(text: "UIuiasda")
-                    TagView(text: "UIuiasdaasihdaosdU")
-                    TagView(text: "Z")
-                    TagView(text: "U ioasd ioasdio ajsoiasd")
-                    TagView(text: "Uidsi")
+                DynamicGrid(alignment: .center) {
                     TagView(text: "A")
                     TagView(text: "B")
+                    TagView(text: "C")
+                    TagView(text: "DDDDDD")
+                    TagView(text: "EEEEEEEEEEEEEEEEEEEE")
+                    TagView(text: "FF")
+                    TagView(text: "GGGGGGGGGGGGGGGGGGGGGGG")
+                    TagView(text: "HHHH")
+                    TagView(text: "III")
+                    TagView(text: "J")
                 }
                 .frame(maxWidth: 150)
-                .background(Color.red)
                 
                 Spacer()
             }

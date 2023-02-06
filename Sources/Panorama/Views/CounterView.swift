@@ -2,6 +2,23 @@
 import SwiftUI
 import Toolbox
 
+/// A view that counts up or down from one number to another with a slot-machine style animation
+///
+/// `CounterView` displays the current count as a horizontal stack of digits. Digit changes are animated
+/// by sliding in a new digit from above while sliding down the current digit. The step size of the animation is
+/// ajdusted based on the distance between the start and end values.
+///
+/// This example creates a `CounterView` that animates in steps of 1:
+/// ```swift
+/// CounterView(startValue: 25, endValue: 15, fontSize: 50, fontColor: .black, animationDuration: 1)
+/// ```
+/// ![A CounterView counting down from 25 to 15](CounterView_Step1)
+/// 
+/// This example creates a `CounterView` that animates in steps of 10:
+/// ```swift
+/// CounterView(startValue: 1050, endValue: 950, fontSize: 50, fontColor: .black)
+/// ```
+/// ![A CounterView counting down from 1,050 to 950](CounterView_Step10)
 public struct CounterView: View {
     /// The starting value of the counter.
     let startValue: Int
@@ -36,7 +53,17 @@ public struct CounterView: View {
     /// The active digit animations.
     @State var digitAnimations: [(Double, Int?)?]
     
-    /// Default initializer.
+    
+    /// Create a counter view.
+    ///
+    /// - Parameters:
+    ///   - startValue: The value the counter starts from.
+    ///   - endValue: The value the counter ends at.
+    ///   - fontSize: The font size of the counter.
+    ///   - fontColor: The color of the counter.
+    ///   - animationDuration: The duration of the counting animation.
+    ///   - animationDelay: The delay of the counting animation.
+    ///   - onAnimationComplete: Callback to invoke once the animation completes.
     public init(startValue: Int, endValue: Int,
                 fontSize: CGFloat, fontColor: Color,
                 animationDuration: Double? = nil,
@@ -70,6 +97,7 @@ public struct CounterView: View {
         self._displayDigits = .init(initialValue: self.startValueDigits)
     }
     
+    /// - Returns: The default animation duration counting from `startValue` to `endValue`.
     public static func defaultAnimationDuration(startValue: Int, endValue: Int) -> TimeInterval {
         let difference = abs(startValue - endValue)
         switch difference {

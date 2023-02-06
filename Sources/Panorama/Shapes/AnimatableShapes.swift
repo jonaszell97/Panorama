@@ -2,6 +2,15 @@
 import SwiftUI
 import Toolbox
 
+/// A checkmark whose stroke can be animated.
+///
+/// Example usage:
+/// ```swift
+/// AnimatableCheckmark(progress: progress)
+///     .stroke(Color.green, lineWidth: 5)
+///     .frame(width: 30, height: 30)
+/// ```
+/// ![An animated checkmark.](AnimatableCheckmark)
 public struct AnimatableCheckmark: Shape {
     /// The animation progress.
     var progress: CGFloat
@@ -20,7 +29,9 @@ public struct AnimatableCheckmark: Shape {
     /// The third point in the checkmark.
     static let point3: CGPoint = CGPoint(x: 1,   y: 0.1)
     
-    /// Memberwise initializer.
+    /// Initialize with a given progress percentage.
+    ///
+    /// - Parameter progress: The animation progress percentage in [0, 1].
     public init(progress: CGFloat) {
         self.progress = progress
     }
@@ -62,6 +73,15 @@ public struct AnimatableCheckmark: Shape {
     }
 }
 
+/// A X-mark whose stroke can be animated.
+///
+/// Example usage:
+/// ```swift
+/// AnimatableXMark(progress: progress)
+///     .stroke(Color.red, lineWidth: 5)
+///     .frame(width: 30, height: 30)
+/// ```
+/// ![An animated X-mark.](AnimatableXmark)
 public struct AnimatableXMark: Shape {
     /// The animation progress.
     var progress: CGFloat
@@ -83,7 +103,9 @@ public struct AnimatableXMark: Shape {
     /// The fourth point in the xmark.
     static let point4: CGPoint = CGPoint(x: 1,   y: 0)
     
-    /// Memberwise initializer.
+    /// Initialize with a given progress percentage.
+    ///
+    /// - Parameter progress: The animation progress percentage in [0, 1].
     public init(progress: CGFloat) {
         self.progress = progress
     }
@@ -128,6 +150,15 @@ public struct AnimatableXMark: Shape {
     }
 }
 
+/// A circle whose stroke can be animated.
+///
+/// Example usage:
+/// ```swift
+/// AnimatableCircle(progress: progress)
+///     .stroke(Color.black, lineWidth: 5)
+///     .frame(width: 30, height: 30)
+/// ```
+/// ![An animated circle.](AnimatableCircle)
 public struct AnimatableCircle: Shape {
     /// The animation progress.
     var progress: CGFloat
@@ -137,7 +168,9 @@ public struct AnimatableCircle: Shape {
         set { progress = newValue }
     }
     
-    /// Memberwise initializer.
+    /// Initialize with a given progress percentage.
+    ///
+    /// - Parameter progress: The animation progress percentage in [0, 1].
     public init(progress: CGFloat) {
         self.progress = progress
     }
@@ -153,3 +186,32 @@ public struct AnimatableCircle: Shape {
     }
 }
 
+struct AnimatableShapePreviews: PreviewProvider {
+    struct Preview: View {
+        @State var progress: CGFloat = 0
+        var body: some View {
+            VStack(spacing: 50) {
+                AnimatableCheckmark(progress: progress)
+                    .stroke(Color.green, lineWidth: 5)
+                    .frame(width: 30, height: 30)
+                
+                AnimatableXMark(progress: progress)
+                    .stroke(Color.red, lineWidth: 5)
+                    .frame(width: 30, height: 30)
+                
+                AnimatableCircle(progress: progress)
+                    .stroke(Color.black, lineWidth: 5)
+                    .frame(width: 30, height: 30)
+            }
+            .onAppear {
+                withAnimation(.easeInOut(duration: 1)) {
+                    self.progress = 1
+                }
+            }
+        }
+    }
+    
+    static var previews: some View {
+        Preview()
+    }
+}

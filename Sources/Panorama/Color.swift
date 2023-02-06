@@ -6,8 +6,9 @@ import Toolbox
 import UIKit
 #endif
 
-public extension Color {
-    var components: (red: Double, green: Double, blue: Double, opacity: Double) {
+extension Color {
+    /// The red, green, blue, and alpha components of this color.
+    public var components: (red: Double, green: Double, blue: Double, opacity: Double) {
         var r: CGFloat = 0
         var g: CGFloat = 0
         var b: CGFloat = 0
@@ -32,7 +33,13 @@ public extension Color {
         return (Double(r), Double(g), Double(b), Double(o))
     }
     
-    static func Lerp(from c1: Color, to c2: Color, progress: Double) -> Color {
+    /// Lerp between two colors.
+    /// - Parameters:
+    ///   - c1: The starting color.
+    ///   - c2: The target color.
+    ///   - progress: The lerp percentage in [0, 1].
+    /// - Returns: A lerped color that is a distance determined by `progress` between `c1` and `c2`.
+    public static func Lerp(from c1: Color, to c2: Color, progress: Double) -> Color {
         let c1 = c1.components
         let c2 = c2.components
         
@@ -64,29 +71,52 @@ public extension Color {
                      blue: min(components.blue + percentage, 1.0))
     }
     
-    func brightened(by percentage: Double) -> Color {
+    /// Brighten a color by a given amount.
+    ///
+    /// - Parameter percentage: The amount to brighten the color by.
+    /// - Returns: A brightened version of this color.
+    public func brightened(by percentage: Double) -> Color {
         adjust(by: abs(percentage))
     }
     
-    func darkened(by percentage: Double) -> Color {
+    /// Darken a color by a given amount.
+    ///
+    /// - Parameter percentage: The amount to darken the color by.
+    /// - Returns: A darkened version of this color.
+    public func darkened(by percentage: Double) -> Color {
         adjust(by: -abs(percentage))
     }
     
-    // https://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
-    var contrastColor: Color {
+    /// Create a color that contrasts well with the color represented by `self`.
+    ///
+    /// - Returns: `Color.white` if `self` is dark, and `Color.black` if `self` is bright.
+    public var contrastColor: Color {
+        // https://stackoverflow.com/questions/596216/formula-to-determine-brightness-of-rgb-color
         let components = self.components
         let luminance = (0.299 * components.red + 0.587 * components.green + 0.114 * components.blue)
         
         return luminance > 0.5 ? .black : .white
     }
     
-    func applyOpacity(_ opacity: Double, background: Color = .white) -> Color {
+    /// Create a new color that is equivalent to applying the given opacity to `self`, but with no transparency.
+    ///
+    /// - Parameters:
+    ///   - opacity: The opacity to apply.
+    ///   - background: The background color to bake in.
+    /// - Returns: A new color that is equivalent to applying the given opacity to `self`, but with no transparency.
+    public func applyOpacity(_ opacity: Double, background: Color = .white) -> Color {
         return merge(with: background, weight: opacity)
     }
     
-    func merge(with: Color, weight: Double = 0.5) -> Color {
+    /// Merge this color with another one, with a given weight.
+    ///
+    /// - Parameters:
+    ///   - other: The color to merge with.
+    ///   - weight: The weight to apply to this color.
+    /// - Returns: A merged version of the two colors.
+    public func merge(with other: Color, weight: Double = 0.5) -> Color {
         let components = self.components
-        let other = with.components
+        let other = other.components
         let inv = 1.0 - weight
         
         return Color(red: components.red * weight + other.red * inv,
@@ -94,19 +124,22 @@ public extension Color {
                      blue: components.blue * weight + other.blue * inv)
     }
     
-    static func random(using rng: inout ARC4RandomNumberGenerator) -> Color {
+    /// - Returns: A random color using the given RNG.
+    public static func random(using rng: inout ARC4RandomNumberGenerator) -> Color {
         Color(red: Double.random(in: 0...1, using: &rng),
               green: Double.random(in: 0...1, using: &rng),
               blue: Double.random(in: 0...1, using: &rng))
     }
     
-    static func random() -> Color {
+    /// - Returns: A random color using the system RNG.
+    public static func random() -> Color {
         Color(red: Double.random(in: 0...1),
               green: Double.random(in: 0...1),
               blue: Double.random(in: 0...1))
     }
     
-    static func random(seed: UInt64) -> Color {
+    /// - Returns: A random color determined by the given seed.
+    public static func random(seed: UInt64) -> Color {
         var rng = ARC4RandomNumberGenerator(seed: seed)
         return .random(using: &rng)
     }

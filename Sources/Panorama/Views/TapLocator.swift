@@ -4,7 +4,7 @@
 
 import SwiftUI
 
-// The types of touches users want to be notified about
+/// The type of touch that a user can be notified about.
 public struct TouchType: OptionSet {
     public let rawValue: Int
     public init(rawValue: Int) {
@@ -116,9 +116,16 @@ fileprivate struct TouchLocater: ViewModifier {
 
 // A new method on View that makes it easier to apply our touch locater view.
 public extension View {
+    /// Installs a callback on this view that is invoked on every tap with the screen position of the tap.
+    ///
+    /// - Parameters:
+    ///   - type: The type of tap event that should trigger the callback.
+    ///   - limitToBounds: Whether taps shoiuld be limited to the view's bounds.
+    ///   - callback: The callback to invoke with the tap location.
+    /// - Returns: The `self` view with a new tap callback.
     func onTouch(type: TouchType = .ended, limitToBounds: Bool = true,
-                 perform: @escaping (CGPoint) -> Void) -> some View {
-        self.modifier(TouchLocater(type: type, limitToBounds: limitToBounds, perform: perform))
+                 perform callback: @escaping (CGPoint) -> Void) -> some View {
+        self.modifier(TouchLocater(type: type, limitToBounds: limitToBounds, perform: callback))
     }
 }
 

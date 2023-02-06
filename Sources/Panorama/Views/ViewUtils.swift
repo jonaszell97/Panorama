@@ -5,7 +5,9 @@ import SwiftUI
 import UIKit
 #endif
 
+/// A button style that does not change the apperance of the button.
 public struct EmptyButtonStyle: ButtonStyle {
+    /// Create an empty button style.
     public init() {
         
     }
@@ -16,6 +18,7 @@ public struct EmptyButtonStyle: ButtonStyle {
 }
 
 public extension View {
+    /// Hide a list background only if the required method is available.
     func hideListBackgroundIfAvailable() -> some View {
         ZStack {
             if #available(iOS 16, macOS 13, *) {
@@ -29,10 +32,12 @@ public extension View {
 }
 
 public extension EdgeInsets {
+    /// The combined top and bottom insets.
     var vertical: CGFloat {
         self.top + self.bottom
     }
     
+    /// The combined leading and trailing insets.
     var horizontal: CGFloat {
         self.leading + self.trailing
     }
@@ -40,6 +45,11 @@ public extension EdgeInsets {
 
 public extension View {
     /// Apply a modifier to this view only if the given condition is true.
+    ///
+    /// - Parameters:
+    ///   - condition: The condition that controls the modifier.
+    ///   - modifier: The modifier to apply conditionally.
+    /// - Returns: The `self` view, optionally with `modifier` applied to it if `condition` is true.
     func applyIf<M: ViewModifier>(_ condition: Bool, _ modifier: M) -> some View {
         ZStack {
             if condition {
@@ -51,7 +61,12 @@ public extension View {
         }
     }
     
-    /// Apply a modifier to this view only if the given condition is true.
+    /// Apply a modifier function to this view only if the given condition is true.
+    ///
+    /// - Parameters:
+    ///   - condition: The condition that controls the modifier.
+    ///   - modifierFunction: The modifier function to apply conditionally.
+    /// - Returns: The `self` view, optionally with `modifier` applied to it if `condition` is true.
     func applyIf<T: View>(_ condition: Bool, modifierFunction: (Self) -> T) -> some View {
         ZStack {
             if condition {
@@ -64,6 +79,12 @@ public extension View {
     }
     
     /// A combination of the `onAppear` and `onChange` modifiers.
+    ///
+    /// - Parameters:
+    ///   - value: The value to check against when determining whether to run the closure.
+    ///   - action: A closure to run when the value changes or the view appears.
+    ///
+    /// - Returns: A view that fires an action when the specified value changes or when it appears.
     func onAppearOrChange<T>(of value: T, perform action: @escaping (T) -> Void)
         -> some View where T: Equatable
     {
@@ -102,14 +123,23 @@ fileprivate struct RelativeOffsetView<Content: View>: View {
 }
 
 public extension View {
-    /// Apply a relative offset to this view.
+    /// Apply an offset that is relative to the view's size.
+    ///
+    /// - Parameter offset: The offset to apply. The width and height of the offset are
+    /// multiplied by the view's widtth and height, respectively.
+    /// - Returns: The `self` view offset by the given amount.
     func relativeOffset(_ offset: CGSize) -> some View {
         RelativeOffsetView(relativeOffset: offset) {
             self
         }
     }
     
-    /// Apply a relative offset to this view.
+    /// Apply an offset that is relative to the view's size.
+    ///
+    /// - Parameters:
+    ///   - x: The horizontal offset. This value is multiplied by the view's size.
+    ///   - y: The vertical offset. This value is multiplied by the view's size.
+    /// - Returns: The `self` view offset by the given amount.
     func relativeOffset(x: CGFloat? = nil, y: CGFloat? = nil) -> some View {
         RelativeOffsetView(relativeOffset: .init(width: x ?? 0, height: y ?? 0)) {
             self
@@ -144,10 +174,13 @@ public extension View {
 
 #if canImport(UIKit)
 
-/// Allows using UIVisualEffect in SwiftUI.
+/// Apply a `UIVisualEffect` to a SwiftUI `View`.
 public struct VisualEffectView: UIViewRepresentable {
     var effect: UIVisualEffect?
     
+    /// Create a visual effect view with a given effect.
+    ///
+    /// - Parameter effect: The effect to apply.
     public init(effect: UIVisualEffect? = nil) {
         self.effect = effect
     }
@@ -160,7 +193,10 @@ public struct VisualEffectView: UIViewRepresentable {
 }
 
 public extension View {
-    /// Applies a UIBlurEffect to the background of this view.
+    /// Applies a `UIBlurEffect` to the background of this view.
+    ///
+    /// - Parameter style: The blur style to apply.
+    /// - Returns: The `self`view with a background with the specified blur.
     func blurredBackground(style: UIBlurEffect.Style) -> some View {
         self.background(VisualEffectView(effect: UIBlurEffect(style: style)))
     }

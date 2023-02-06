@@ -1,6 +1,7 @@
 
 import SwiftUI
 
+/// A star shape with rounded corners.
 public struct RoundedStar: Shape {
     var cornerRadius: CGFloat
     
@@ -9,6 +10,10 @@ public struct RoundedStar: Shape {
         set { cornerRadius = newValue }
     }
     
+    
+    /// Create a star shape.
+    ///
+    /// - Parameter cornerRadius: The star's corner radius.
     public init(cornerRadius: CGFloat) {
         self.cornerRadius = cornerRadius
     }

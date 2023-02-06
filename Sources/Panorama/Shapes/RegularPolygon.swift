@@ -2,10 +2,14 @@
 import SwiftUI
 import Toolbox
 
+/// A regular polygon with a customizable side count.
 public struct RegularPolygon: Shape {
     /// The number of sides of this polygon.
     let sideCount: Int
     
+    /// Create a regular polygon shape with the given number of sides.
+    ///
+    /// - Parameter sideCount: The number of sides of the polygon.
     public init(sideCount: Int) {
         self.sideCount = sideCount
     }

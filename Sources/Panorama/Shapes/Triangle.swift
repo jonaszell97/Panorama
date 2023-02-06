@@ -1,6 +1,7 @@
 
 import SwiftUI
 
+/// A triangle shape with a specifiable direction and border.
 public struct Triangle: Shape {
     public enum Direction {
         case Up, Down, Left, Right
@@ -16,6 +17,11 @@ public struct Triangle: Shape {
     /// The border mode.
     var borderMode: BorderMode = .All
     
+    /// Create a triangle shape.
+    ///
+    /// - Parameters:
+    ///   - direction: The direction the tip of the triangle is facing.
+    ///   - borderMode: The borders to draw.
     public init(direction: Direction, borderMode: BorderMode) {
         self.direction = direction
         self.borderMode = borderMode

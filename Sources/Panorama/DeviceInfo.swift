@@ -11,6 +11,7 @@ import IOKit
 
 import SwiftUI
 
+/// This enumeration contains all released iPod and iPhone models.
 public enum DeviceModel: String, CaseIterable {
     case iPodTouch5 = "iPod touch (5th generation)",
          iPodTouch6 = "iPod touch (6th generation)",
@@ -56,6 +57,7 @@ public enum DeviceModel: String, CaseIterable {
     case other = "Other"
 }
 
+/// This enumeration covers all screen types that have been present in released iPods and iPhones.
 public enum ScreenType: String, RawRepresentable, CaseIterable {
     case iPhone4 = "iPhone 4"
     case iPhone5 = "iPhone 5"
@@ -85,21 +87,24 @@ public enum ScreenType: String, RawRepresentable, CaseIterable {
     }
 }
 
-#if canImport(IOKit)
-// https://stackoverflow.com/a/50008492/7564976
+/// - Returns: A unique identifier for the current model of Mac.
 public func getMacModelIdentifier() -> String? {
+    #if canImport(IOKit)
+    // https://stackoverflow.com/a/50008492/7564976
     let service = IOServiceGetMatchingService(kIOMasterPortDefault,
                                               IOServiceMatching("IOPlatformExpertDevice"))
     
-    var modelIdentifier: String?
+    var modelIdentifier: String? = nil
     if let modelData = IORegistryEntryCreateCFProperty(service, "model" as CFString, kCFAllocatorDefault, 0).takeRetainedValue() as? Data {
         modelIdentifier = String(data: modelData, encoding: .utf8)?.trimmingCharacters(in: .controlCharacters)
     }
     
     IOObjectRelease(service)
     return modelIdentifier
+    #else
+    return nil
+    #endif
 }
-#endif
 
 #if canImport(UIKit)
 public extension UIDevice {
@@ -107,6 +112,7 @@ public extension UIDevice {
         current.identifierForVendor?.uuidString
     }
     
+    /// The unique device model identifier, e.g. `iPhone13,1` for the iPhone 12 mini.
     static var deviceIdentifier: String = {
         var systemInfo = utsname()
         uname(&systemInfo)
@@ -120,6 +126,7 @@ public extension UIDevice {
         return identifier
     }()
     
+    /// An estimate for the device of the current simulator based on its screen dimensions.
     static func simulatorDeviceModel() -> DeviceModel {
         let screenWidth = UIScreen.main.bounds.width
         let screenHeight = UIScreen.main.bounds.height
@@ -146,6 +153,7 @@ public extension UIDevice {
         return .simulator
     }
     
+    /// The device model defined by a model identifier.
     static func deviceModel(for identifier: String) -> DeviceModel { // swiftlint:disable:this cyclomatic_complexity
         switch identifier {
         case "iPod5,1":                                 return .iPodTouch5
@@ -747,7 +755,7 @@ public extension ScreenType {
     }
 }
 
-/// The current full iOS version string.
+/// The current full iOS version string with major, minor, and patch versions, e.g. `16.2.1`.
 public func getiOSVersionString() -> String {
     let os = ProcessInfo.processInfo.operatingSystemVersion
     return String(os.majorVersion) + "." + String(os.minorVersion) + "." + String(os.patchVersion)

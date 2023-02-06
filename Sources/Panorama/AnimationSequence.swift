@@ -11,7 +11,7 @@ fileprivate extension Log {
 #endif
 
 /// An animation sequence allows the execution of several animation steps (and other functions) one after the other with
-/// specifiable timing.
+/// customizable timing.
 public class AnimationSequence {
     public enum AnimationSequenceAction {
         /// An animation.
@@ -78,7 +78,9 @@ public class AnimationSequence {
     /// Whether this sequence was ever started.
     private var didStartExecution: Bool = false
     
-    /// Default initializer.
+    /// Create an animation sequence. Actions can be specified here or added later.
+    ///
+    /// - Parameter actions: The actions in the sequence.
     public init(actions: [AnimationSequence.AnimationSequenceAction] = []) {
         self.actions = actions
         self.totalDuration = 0
@@ -94,7 +96,14 @@ public class AnimationSequence {
         #endif
     }
     
-    /// Append an action.
+    /// Append an animated action to this sequence.
+    ///
+    /// - Parameters:
+    ///   - animation: The animation to use.
+    ///   - duration: The duration of the animation.
+    ///   - delay: The delay of the animation.
+    ///   - function: The action that is invoked with the given animation.
+    /// - Returns: Returns `self` for method chaining.
     @discardableResult public func append(animation: Animation?,
                                           duration: Double = 0.35,
                                           delay: Double = 0,
@@ -107,7 +116,12 @@ public class AnimationSequence {
         return self
     }
     
-    /// Append an action.
+    /// Append an action to this sequence.
+    ///
+    /// - Parameters:
+    ///   - delay: The delay of the action.
+    ///   - function: The action callback
+    /// - Returns: Returns `self` for method chaining.
     @discardableResult public func append(delay: Double = 0,
                                           function: @escaping () -> Void) -> AnimationSequence {
         actions.append(.function(function: function, delay: delay))
@@ -116,7 +130,10 @@ public class AnimationSequence {
         return self
     }
     
-    /// Append a sequence element.
+    /// Append a pre-created sequence element to thsi sequence.
+    ///
+    /// - Parameter action: The action to append.
+    /// - Returns: Returns `self` for method chaining.
     @discardableResult public func append(_ action: AnimationSequenceAction) -> AnimationSequence {
         actions.append(action)
         totalDuration += action.duration
@@ -126,6 +143,8 @@ public class AnimationSequence {
     }
     
     /// Execute the animation sequence.
+    ///
+    /// - Returns: The estimated duration of the sequence execution in seconds.
     @discardableResult public func execute() -> Double {
         self.didStartExecution = true
         
@@ -157,7 +176,7 @@ public class AnimationSequence {
         }
     }
     
-    /// Continue a suspended sequence.
+    /// Continue a suspended sequence. This will report a critical error if the sequence has not previously been suspended.
     public func resume() {
         guard case .suspension = self.actions[self.currentIndex] else {
             Log.reportCriticalError("resuming a non-suspended sequence")
@@ -174,6 +193,8 @@ public class AnimationSequence {
     }
     
     /// Skip to the given point in the sequence.
+    /// 
+    /// - Parameter index: The index that should be moved to.
     public func skip(to index: Int) {
         guard self.actions.count > index else {
             Log.reportCriticalError("trying to skip to index \(index) in AnimationSequence with \(self.actions.count) actions")
