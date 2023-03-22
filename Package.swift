@@ -15,7 +15,7 @@ let package = Package(
             targets: ["Panorama"]),
     ],
     dependencies: [
-        .package(url: "/Users/jonaszell/Toolbox", branch: "dev"),
+        .package(url: "https://github.com/jonaszell97/Toolbox.git", from: "0.1.0"),
     ],
     targets: [
         .target(
