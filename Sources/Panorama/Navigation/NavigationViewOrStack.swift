@@ -1,6 +1,21 @@
 
 import SwiftUI
 
+fileprivate struct NavigationStackPushValueEnvironmentKey: EnvironmentKey {
+    static let defaultValue: Optional<(Any) -> Void> = nil
+}
+
+fileprivate extension EnvironmentValues {
+    var navigationStackPushValue: Optional<(Any) -> Void> {
+        get {
+            return self[NavigationStackPushValueEnvironmentKey.self]
+        }
+        set {
+            self[NavigationStackPushValueEnvironmentKey.self] = newValue
+        }
+    }
+}
+
 public struct NavigationViewOrStack<Data, Root, Content>: View
     where Root: View, Content: View,
           Data: MutableCollection, Data: RandomAccessCollection,
@@ -71,6 +86,47 @@ public struct NavigationViewOrStack<Data, Root, Content>: View
         }
         else {
             navigationView
+                .environment(\.navigationStackPushValue) { value in
+                    guard let value = value as? Data.Element else {
+                        return
+                    }
+                    
+                    self.path.append(value)
+                }
+        }
+    }
+}
+
+public struct NavigationStackLink<Data, Label>: View
+    where Label: View, Data: Hashable & Identifiable
+{
+    /// The link value.
+    let value: Data
+    
+    /// Get the view for a navigation path value.
+    let label: Label
+    
+    /// Push a new value.
+    @Environment(\.navigationStackPushValue) var pushValue
+    
+    /// Create a navigation view.
+    public init(value: Data, @ViewBuilder label: () -> Label) {
+        self.value = value
+        self.label = label()
+    }
+    
+    public var body: some View {
+        if #available(iOS 16, *) {
+            NavigationLink(value: self.value) {
+                label
+            }
+        }
+        else {
+            Button(action: {
+                pushValue?(self.value)
+            }, label: {
+                label
+            })
         }
     }
 }
