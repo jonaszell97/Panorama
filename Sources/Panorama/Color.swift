@@ -6,6 +6,140 @@ import Toolbox
 import UIKit
 #endif
 
+/// Add static UIColors to Color.
+public extension Color {
+    /// The base gray color.
+    static let systemGray: Color = Color(uiColor: .systemGray)
+    
+    /// Slightly lighter than systemGray in light mode, slightly darker in dark mode.
+    static let systemGray2: Color = Color(uiColor: .systemGray2)
+    
+    /// Slightly lighter than systemGray2 in light mode, slightly darker in dark mode.
+    static let systemGray3: Color = Color(uiColor: .systemGray3)
+    
+    /// Slightly lighter than systemGray3 in light mode, slightly darker in dark mode.
+    static let systemGray4: Color = Color(uiColor: .systemGray4)
+    
+    /// Slightly lighter than systemGray4 in light mode, slightly darker in dark mode.
+    static let systemGray5: Color = Color(uiColor: .systemGray5)
+    
+    /// Slightly lighter than systemGray5 in light mode, slightly darker in dark mode.
+    static let systemGray6: Color = Color(uiColor: .systemGray6)
+    
+    /// This color represents the tint color of a view.
+    ///
+    /// Like other dynamic colors, UIColor.tintColor relies on UITraitCollection.currentTraitCollection
+    /// being set to a view's trait collection when it is used, so that it can resolve to that view's
+    /// tint color. If you use UIColor.tintColor outside a view's context, and do not resolve it
+    /// manually with a view's trait collection, it will return the system default tint color.
+    ///
+    /// Setting UIColor.tintColor directly to a view's tintColor property behaves the same as setting nil.
+    /// However, you cannot set a custom dynamic color (e.g. using +[UIColor colorWithDynamicProvider:])
+    /// that can resolve to UIColor.tintColor to a view's tintColor property.
+    static let tintColor: Color = Color(uiColor: .tintColor)
+    
+    /// Foreground colors for static text and related elements.
+    static let label: Color = Color(uiColor: .label)
+    
+    /// Foreground colors for static text and related elements.
+    static let secondaryLabel: Color = Color(uiColor: .secondaryLabel)
+    
+    /// Foreground colors for static text and related elements.
+    static let tertiaryLabel: Color = Color(uiColor: .tertiaryLabel)
+    
+    /// Foreground colors for static text and related elements.
+    static let quaternaryLabel: Color = Color(uiColor: .quaternaryLabel)
+    
+    /// Foreground color for standard system links.
+    static let link: Color = Color(uiColor: .link)
+    
+    
+    /// Foreground color for placeholder text in controls or text fields or text views.
+    static let placeholderText: Color = Color(uiColor: .placeholderText)
+    
+    
+    /// Foreground colors for separators (thin border or divider lines).
+    ///
+    /// `separatorColor` may be partially transparent, so it can go on top of any content.
+    static let separator: Color = Color(uiColor: .separator)
+    
+    /// Foreground colors for separators (thin border or divider lines).
+    ///
+    /// `opaqueSeparatorColor` is intended to look similar, but is guaranteed to be opaque, so it will
+    /// completely cover anything behind it. Depending on the situation, you may need one or the other.
+    static let opaqueSeparator: Color = Color(uiColor: .opaqueSeparator)
+    
+    /// We provide two design systems (also known as "stacks") for structuring an iOS app's backgrounds.
+    ///
+    /// Each stack has three "levels" of background colors. The first color is intended to be the
+    /// main background, farthest back. Secondary and tertiary colors are layered on top
+    /// of the main background, when appropriate.
+    ///
+    /// Inside of a discrete piece of UI, choose a stack, then use colors from that stack.
+    /// We do not recommend mixing and matching background colors between stacks.
+    /// The foreground colors above are designed to work in both stacks.
+    ///
+    /// 1. systemBackground
+    ///    Use this stack for views with standard table views, and designs which have a white
+    ///    primary background in light mode.
+    static let systemBackground: Color = Color(uiColor: .systemBackground)
+    
+    /// Secondary and tertiary colors are layered on top of the main background, when appropriate.
+    static let secondarySystemBackground: Color = Color(uiColor: .secondarySystemBackground)
+    
+    /// Secondary and tertiary colors are layered on top of the main background, when appropriate.
+    static let tertiarySystemBackground: Color = Color(uiColor: .tertiarySystemBackground)
+    
+    /// We provide two design systems (also known as "stacks") for structuring an iOS app's backgrounds.
+    ///
+    /// Each stack has three "levels" of background colors. The first color is intended to be the
+    /// main background, farthest back. Secondary and tertiary colors are layered on top
+    /// of the main background, when appropriate.
+    ///
+    /// Inside of a discrete piece of UI, choose a stack, then use colors from that stack.
+    /// We do not recommend mixing and matching background colors between stacks.
+    /// The foreground colors above are designed to work in both stacks.
+    ///
+    /// 2. systemGroupedBackground
+    ///    Use this stack for views with grouped content, such as grouped tables and
+    ///    platter-based designs. These are like grouped table views, but you may use these
+    ///    colors in places where a table view wouldn't make sense.
+    static let systemGroupedBackground: Color = Color(uiColor: .systemGroupedBackground)
+    
+    /// Secondary and tertiary colors are layered on top of the main background, when appropriate.
+    static let secondarySystemGroupedBackground: Color = Color(uiColor: .secondarySystemGroupedBackground)
+    
+    /// Secondary and tertiary colors are layered on top of the main background, when appropriate.
+    static let tertiarySystemGroupedBackground: Color = Color(uiColor: .tertiarySystemGroupedBackground)
+    
+    /// Fill colors for UI elements.
+    /// These are meant to be used over the background colors, since their alpha component is less than 1.
+    ///
+    /// systemFillColor is appropriate for filling thin and small shapes.
+    /// Example: The track of a slider.
+    static let systemFill: Color = Color(uiColor: .systemFill)
+    
+    /// secondarySystemFillColor is appropriate for filling medium-size shapes.
+    /// Example: The background of a switch.
+    static let secondarySystemFill: Color = Color(uiColor: .secondarySystemFill)
+    
+    /// tertiarySystemFillColor is appropriate for filling large shapes.
+    /// Examples: Input fields, search bars, buttons.
+    static let tertiarySystemFill: Color = Color(uiColor: .tertiarySystemFill)
+    
+    /// quaternarySystemFillColor is appropriate for filling large areas containing complex content.
+    /// Example: Expanded table cells.
+    static let quaternarySystemFill: Color = Color(uiColor: .quaternarySystemFill)
+    
+    /// lightTextColor is always light, and darkTextColor is always dark, regardless of the current UIUserInterfaceStyle.
+    /// When possible, we recommend using `labelColor` and its variants, instead.
+    static let lightText: Color = Color(uiColor: .lightText) // for a dark background
+    
+    /// lightTextColor is always light, and darkTextColor is always dark, regardless of the current UIUserInterfaceStyle.
+    /// When possible, we recommend using `labelColor` and its variants, instead.
+    static let darkText: Color = Color(uiColor: .darkText) // for a light background
+}
+
 extension Color {
     /// The red, green, blue, and alpha components of this color.
     public var components: (red: Double, green: Double, blue: Double, opacity: Double) {
