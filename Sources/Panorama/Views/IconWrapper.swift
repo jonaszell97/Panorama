@@ -92,9 +92,86 @@ public struct IconWrapperView: View {
     }
 }
 
+extension IconWrapper: Equatable {
+    public static func ==(lhs: IconWrapper, rhs: IconWrapper) -> Bool {
+        guard lhs.codingKey == rhs.codingKey else {
+            return false
+        }
+        
+        switch lhs {
+        case .System(let systemName, let rotation, let scale):
+            guard case .System(let systemName_, let rotation_, let scale_) = rhs else { return false }
+            guard systemName == systemName_ else { return false }
+            guard rotation == rotation_ else { return false }
+            guard scale == scale_ else { return false }
+        case .Image(let name, let rotation, let scale):
+            guard case .Image(let name_, let rotation_, let scale_) = rhs else { return false }
+            guard name == name_ else { return false }
+            guard rotation == rotation_ else { return false }
+            guard scale == scale_ else { return false }
+        case .LoadedImage(let image, let rotation, let scale):
+            guard case .LoadedImage(let image_, let rotation_, let scale_) = rhs else { return false }
+            guard image == image_ else { return false }
+            guard rotation == rotation_ else { return false }
+            guard scale == scale_ else { return false }
+        case .Text(let text, let rotation, let scale):
+            guard case .Text(let text_, let rotation_, let scale_) = rhs else { return false }
+            guard text == text_ else { return false }
+            guard rotation == rotation_ else { return false }
+            guard scale == scale_ else { return false }
+        default: break
+        }
+        
+        return true
+    }
+}
+
+extension IconWrapper: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.codingKey.rawValue)
+        switch self {
+        case .System(let systemName, let rotation, let scale):
+            hasher.combine(systemName)
+            hasher.combine(rotation)
+            hasher.combine(scale)
+        case .Image(let name, let rotation, let scale):
+            hasher.combine(name)
+            hasher.combine(rotation)
+            hasher.combine(scale)
+        #if canImport(UIKit)
+        case .LoadedImage(let image, let rotation, let scale):
+            hasher.combine(image)
+            hasher.combine(rotation)
+            hasher.combine(scale)
+        #endif
+        case .Text(let text, let rotation, let scale):
+            hasher.combine(text)
+            hasher.combine(rotation)
+            hasher.combine(scale)
+        default: break
+        }
+    }
+}
+
 extension IconWrapper: Codable {
-    enum CodingKeys: CodingKey {
-        case systemImage, image, text, placeholder, loadedImage
+    enum CodingKeys: String, CodingKey {
+        case systemImage, image, text, placeholder
+        
+        #if canImport(UIKit)
+        case loadedImage
+        #endif
+    }
+    
+    var codingKey: CodingKeys {
+        switch self {
+        case .System: return .systemImage
+        case .Image: return .image
+        #if canImport(UIKit)
+        case .LoadedImage: return .loadedImage
+        #endif
+        case .Text: return .text
+        case .Placeholder: return .placeholder
+        }
     }
     
     public func encode(to encoder: Encoder) throws {
