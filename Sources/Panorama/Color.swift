@@ -6,6 +6,7 @@ import Toolbox
 import UIKit
 #endif
 
+#if canImport(UIKit)
 /// Add static UIColors to Color.
 public extension Color {
     /// The base gray color.
@@ -139,6 +140,7 @@ public extension Color {
     /// When possible, we recommend using `labelColor` and its variants, instead.
     static let darkText: Color = Color(uiColor: .darkText) // for a light background
 }
+#endif
 
 extension Color {
     /// The red, green, blue, and alpha components of this color.
