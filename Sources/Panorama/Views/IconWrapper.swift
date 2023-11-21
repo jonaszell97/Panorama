@@ -2,7 +2,7 @@
 import SwiftUI
 import Toolbox
 #if canImport(UIKit)
-import UIKit
+import CoreGraphics
 #endif
 
 /// Wrapper type for icons that can be either SF symbols, custom images, or text.
@@ -15,7 +15,7 @@ public enum IconWrapper {
 
     #if canImport(UIKit)
     /// A custom image icon.
-    case LoadedImage(image: UIImage, rotation: Angle = .zero, scale: CGFloat = 1)
+    case LoadedImage(image: Data, rotation: Angle = .zero, scale: CGFloat = 1)
     #endif
     
     /// A text-based icon.
@@ -66,14 +66,23 @@ public struct IconWrapperView: View {
                     .rotationEffect(rotation)
                     .scaleEffect(scale)
             #if canImport(UIKit)
-            case .LoadedImage(let image, let rotation, let scale):
-                Image(uiImage: image)
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: size.width, height: size.height)
-                    .colorMultiply(color)
-                    .rotationEffect(rotation)
-                    .scaleEffect(scale)
+            case .LoadedImage(let data, let rotation, let scale):
+                if let uiImage = UIImage(data: data) {
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: size.width, height: size.height)
+                        .colorMultiply(color)
+                        .rotationEffect(rotation)
+                        .scaleEffect(scale)
+                }
+                else {
+                    Image(systemName: "xmark.circle.fill")
+                        .font(.system(size: size.width))
+                        .foregroundColor(.red)
+                        .rotationEffect(rotation)
+                        .scaleEffect(scale)
+                }
             #endif
             case .Text(let text, let rotation, let scale):
                 Text(verbatim: text)
@@ -184,8 +193,8 @@ extension IconWrapper: Codable {
         case .Image(let name, let rotation, let scale):
             try container.encodeValues(name, rotation.degrees, scale, for: .image)
         #if canImport(UIKit)
-        case .LoadedImage(let image, let rotation, let scale):
-            try container.encodeValues(image.pngData(), rotation.degrees, scale, for: .loadedImage)
+        case .LoadedImage(let data, let rotation, let scale):
+            try container.encodeValues(data, rotation.degrees, scale, for: .loadedImage)
         #endif
         case .Text(let text, let rotation, let scale):
             try container.encodeValues(text, rotation.degrees, scale, for: .text)
@@ -215,14 +224,7 @@ extension IconWrapper: Codable {
                 return
             }
             
-            guard let img = UIImage(data: imgData) else {
-                Log.reportCriticalError("IconWrapper: decoding UIImage failed")
-                self = .Placeholder
-                
-                return
-            }
-            
-            self = .LoadedImage(image: img, rotation: .init(degrees: rotationDegrees), scale: scale)
+            self = .LoadedImage(image: imgData, rotation: .init(degrees: rotationDegrees), scale: scale)
         #endif
         case .text:
             let (text, rotationDegrees, scale): (String, Double, CGFloat) = try container.decodeValues(for: .text)
