@@ -42,7 +42,7 @@ public struct NavigationViewOrStack<Data, Root, Content>: View
         self.root = root()
     }
     
-    @available(iOS 16, *)
+    @available(iOS 16, macOS 13, *)
     var navigationStackView: some View {
         NavigationStack(path: $path) {
             root
@@ -81,7 +81,7 @@ public struct NavigationViewOrStack<Data, Root, Content>: View
     }
     
     public var body: some View {
-        if #available(iOS 16, *) {
+        if #available(iOS 16, macOS 13, *) {
             navigationStackView
         }
         else {
@@ -116,7 +116,7 @@ public struct NavigationStackLink<Data, Label>: View
     }
     
     public var body: some View {
-        if #available(iOS 16, *) {
+        if #available(iOS 16, macOS 13, *) {
             NavigationLink(value: self.value) {
                 label
             }

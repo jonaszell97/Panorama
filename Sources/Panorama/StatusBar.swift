@@ -2,6 +2,9 @@
 import SwiftUI
 import Toolbox
 
+#if canImport(UIKit)
+import UIKit
+
 // https://gist.github.com/Hiroki-Kawakami/231115bd3c2f739781f53ecea39e2c1f
 public class StatusBarConfigurator: ObservableObject {
     public static let shared = StatusBarConfigurator()
@@ -170,3 +173,5 @@ extension UIApplication {
         }
     }
 }
+
+#endif

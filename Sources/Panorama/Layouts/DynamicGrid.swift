@@ -171,6 +171,10 @@ public struct DynamicGrid: Layout {
     }
 }
 
+#if canImport(UIKit)
+
+import UIKit
+
 @available(iOS 16, macOS 13, *)
 struct DynamicGridPreviews: PreviewProvider {
     struct TagView: View {
@@ -217,3 +221,5 @@ struct DynamicGridPreviews: PreviewProvider {
         PreviewView()
     }
 }
+
+#endif

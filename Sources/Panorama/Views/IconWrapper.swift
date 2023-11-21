@@ -109,11 +109,13 @@ extension IconWrapper: Equatable {
             guard name == name_ else { return false }
             guard rotation == rotation_ else { return false }
             guard scale == scale_ else { return false }
+        #if canImport(UIKit)
         case .LoadedImage(let image, let rotation, let scale):
             guard case .LoadedImage(let image_, let rotation_, let scale_) = rhs else { return false }
             guard image == image_ else { return false }
             guard rotation == rotation_ else { return false }
             guard scale == scale_ else { return false }
+        #endif
         case .Text(let text, let rotation, let scale):
             guard case .Text(let text_, let rotation_, let scale_) = rhs else { return false }
             guard text == text_ else { return false }
