@@ -112,8 +112,8 @@ public func getMacModelIdentifier() -> String? {
 
 #if canImport(UIKit)
 public extension UIDevice {
-    static var uuidString: String? {
-        current.identifierForVendor?.uuidString
+    static var currentDeviceIdentifier: String {
+        current.identifierForVendor?.uuidString ?? ""
     }
     
     /// The unique device model identifier, e.g. `iPhone13,1` for the iPhone 12 mini.

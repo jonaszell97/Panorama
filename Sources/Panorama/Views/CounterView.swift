@@ -464,7 +464,7 @@ struct CounterView_Previews: PreviewProvider {
                               height: 50, animationDuration: 2,
                               animationDelay: 0)
         }
-        .font(.system(size: 50))
+        .font(.system(size: 50).monospacedDigit())
         .foregroundColor(.black)
     }
 }
