@@ -55,7 +55,13 @@ public enum DeviceModel: String, CaseIterable {
          iPhone15 = "iPhone 15",
          iPhone15Plus = "iPhone 15 Plus",
          iPhone15Pro = "iPhone 15 Pro",
-         iPhone15ProMax = "iPhone 15 Pro Max"
+         iPhone15ProMax = "iPhone 15 Pro Max",
+         iPhone16 = "iPhone 16",
+         iPhone16Plus = "iPhone 16 Plus",
+         iPhone16Pro = "iPhone 16 Pro",
+         iPhone16ProMax = "iPhone 16 Pro Max"
+    
+    
     
     case simulator = "Simulator"
     case other = "Other"
@@ -76,6 +82,8 @@ public enum ScreenType: String, RawRepresentable, CaseIterable {
     case iPhone12ProMax = "iPhone 12 Pro Max"
     case iPhone14Pro = "iPhone 14 Pro"
     case iPhone14ProMax = "iPhone 14 Pro Max"
+    case iPhone16Pro = "iPhone 16 Pro"
+    case iPhone16ProMax = "iPhone 16 Pro Max"
     case other = "Other"
     
     /// Whether or not this screen type is an iPhone 5 or smaller.
@@ -202,6 +210,11 @@ public extension UIDevice {
         case "iPhone15,5":                              return .iPhone15Plus
         case "iPhone16,1":                              return .iPhone15Pro
         case "iPhone16,2":                              return .iPhone15ProMax
+        case "iPhone17,3":                              return .iPhone16
+        case "iPhone17,4":                              return .iPhone16Plus
+        case "iPhone17,1":                              return .iPhone16Pro
+        case "iPhone17,2":                              return .iPhone16ProMax
+            
         case "i386", "x86_64", "arm64":                 return Self.simulatorDeviceModel()
         default:                                        return .other
         }
@@ -311,6 +324,10 @@ public extension DeviceModel {
         case .iPhone15Pro:
             fallthrough
         case .iPhone15ProMax:
+            fallthrough
+        case .iPhone16Pro:
+            fallthrough
+        case .iPhone16ProMax:
             return true
         default:
             return false
@@ -461,6 +478,8 @@ public extension DeviceModel {
         case .iPhone15:
             fallthrough
         case .iPhone15Pro:
+            fallthrough
+        case .iPhone16:
             return .iPhone14Pro
         case .iPhone12ProMax:
             fallthrough
@@ -473,7 +492,13 @@ public extension DeviceModel {
         case .iPhone15Plus:
             fallthrough
         case .iPhone15ProMax:
+            fallthrough
+        case .iPhone16Plus:
             return .iPhone14ProMax
+        case .iPhone16Pro:
+            return .iPhone16Pro
+        case .iPhone16ProMax:
+            return .iPhone16ProMax
         case .simulator:
             fallthrough
         case .other:
@@ -533,6 +558,10 @@ public extension ScreenType {
             return 55
         case .iPhone14ProMax:
             return 55
+        case .iPhone16Pro:
+            return 55
+        case .iPhone16ProMax:
+            return 55
         case .iPhone4:
             fallthrough
         case .iPhone5:
@@ -578,6 +607,10 @@ public extension ScreenType {
             return (width: 393, height: 852)
         case .iPhone14ProMax:
             return (width: 430, height: 932)
+        case .iPhone16Pro:
+            return (width: 402, height: 874)
+        case .iPhone16ProMax:
+            return (width: 440, height: 956)
         case .other:
             return nil
         }
@@ -612,6 +645,10 @@ public extension ScreenType {
             return 3
         case .iPhone14ProMax:
             return 3
+        case .iPhone16Pro:
+            return 3
+        case .iPhone16ProMax:
+            return 3
         case .other:
             return nil
         }
@@ -636,6 +673,10 @@ public extension ScreenType {
             return EdgeInsets(top: 59, leading: 0, bottom: 34, trailing: 0)
         case .iPhone14ProMax:
             return EdgeInsets(top: 59, leading: 0, bottom: 34, trailing: 0)
+        case .iPhone16Pro:
+            return EdgeInsets(top: 62, leading: 0, bottom: 34, trailing: 0)
+        case .iPhone16ProMax:
+            return EdgeInsets(top: 62, leading: 0, bottom: 34, trailing: 0)
         case .iPhone4:
             fallthrough
         case .iPhone5:
