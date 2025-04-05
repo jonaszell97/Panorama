@@ -59,9 +59,8 @@ public enum DeviceModel: String, CaseIterable {
          iPhone16 = "iPhone 16",
          iPhone16Plus = "iPhone 16 Plus",
          iPhone16Pro = "iPhone 16 Pro",
-         iPhone16ProMax = "iPhone 16 Pro Max"
-    
-    
+         iPhone16ProMax = "iPhone 16 Pro Max",
+         iPhone16e = "iPhone 16e"
     
     case simulator = "Simulator"
     case other = "Other"
@@ -214,6 +213,7 @@ public extension UIDevice {
         case "iPhone17,4":                              return .iPhone16Plus
         case "iPhone17,1":                              return .iPhone16Pro
         case "iPhone17,2":                              return .iPhone16ProMax
+        case "iPhone17,5":                              return .iPhone16e
             
         case "i386", "x86_64", "arm64":                 return Self.simulatorDeviceModel()
         default:                                        return .other
@@ -499,6 +499,8 @@ public extension DeviceModel {
             return .iPhone16Pro
         case .iPhone16ProMax:
             return .iPhone16ProMax
+        case .iPhone16e:
+            return .iPhone12
         case .simulator:
             fallthrough
         case .other:
