@@ -60,7 +60,11 @@ public enum DeviceModel: String, CaseIterable {
          iPhone16Plus = "iPhone 16 Plus",
          iPhone16Pro = "iPhone 16 Pro",
          iPhone16ProMax = "iPhone 16 Pro Max",
-         iPhone16e = "iPhone 16e"
+         iPhone16e = "iPhone 16e",
+         iPhone17 = "iPhone 17",
+         iPhoneAir = "iPhone Air",
+         iPhone17Pro = "iPhone 17 Pro",
+         iPhone17ProMax = "iPhone 17 Pro Max"
     
     case simulator = "Simulator"
     case other = "Other"
@@ -83,6 +87,7 @@ public enum ScreenType: String, RawRepresentable, CaseIterable {
     case iPhone14ProMax = "iPhone 14 Pro Max"
     case iPhone16Pro = "iPhone 16 Pro"
     case iPhone16ProMax = "iPhone 16 Pro Max"
+    case iPhoneAir = "iPhone Air"
     case other = "Other"
     
     /// Whether or not this screen type is an iPhone 5 or smaller.
@@ -214,6 +219,10 @@ public extension UIDevice {
         case "iPhone17,1":                              return .iPhone16Pro
         case "iPhone17,2":                              return .iPhone16ProMax
         case "iPhone17,5":                              return .iPhone16e
+        case "iPhone18,1":                              return .iPhone17Pro
+        case "iPhone18,2":                              return .iPhone17ProMax
+        case "iPhone18,3":                              return .iPhone17
+        case "iPhone18,4":                              return .iPhoneAir
             
         case "i386", "x86_64", "arm64":                 return Self.simulatorDeviceModel()
         default:                                        return .other
@@ -496,11 +505,19 @@ public extension DeviceModel {
         case .iPhone16Plus:
             return .iPhone14ProMax
         case .iPhone16Pro:
+            fallthrough
+        case .iPhone17:
+            fallthrough
+        case .iPhone17Pro:
             return .iPhone16Pro
         case .iPhone16ProMax:
+            fallthrough
+        case .iPhone17ProMax:
             return .iPhone16ProMax
         case .iPhone16e:
             return .iPhone12
+        case .iPhoneAir:
+            return .iPhoneAir
         case .simulator:
             fallthrough
         case .other:
@@ -564,6 +581,8 @@ public extension ScreenType {
             return 55
         case .iPhone16ProMax:
             return 55
+        case .iPhoneAir:
+            return 55
         case .iPhone4:
             fallthrough
         case .iPhone5:
@@ -613,6 +632,8 @@ public extension ScreenType {
             return (width: 402, height: 874)
         case .iPhone16ProMax:
             return (width: 440, height: 956)
+        case .iPhoneAir:
+            return (width: 420, height: 912)
         case .other:
             return nil
         }
@@ -651,6 +672,8 @@ public extension ScreenType {
             return 3
         case .iPhone16ProMax:
             return 3
+        case .iPhoneAir:
+            return 3
         case .other:
             return nil
         }
@@ -679,6 +702,8 @@ public extension ScreenType {
             return EdgeInsets(top: 62, leading: 0, bottom: 34, trailing: 0)
         case .iPhone16ProMax:
             return EdgeInsets(top: 62, leading: 0, bottom: 34, trailing: 0)
+        case .iPhoneAir:
+            return EdgeInsets(top: 68, leading: 0, bottom: 34, trailing: 0)
         case .iPhone4:
             fallthrough
         case .iPhone5:
