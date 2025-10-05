@@ -44,6 +44,15 @@ public extension EdgeInsets {
 }
 
 public extension View {
+    /// Apply a modifier to this view.
+    ///
+    /// - Parameters:
+    ///   - modifier: The modifier to apply.
+    /// - Returns: The `self` view, with `modifier` applied to it.
+    func modify<T: View>(@ViewBuilder _ modifier: (Self) -> T) -> some View {
+        return modifier(self)
+    }
+    
     /// Apply a modifier to this view only if the given condition is true.
     ///
     /// - Parameters:
