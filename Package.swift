@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "Panorama",
     platforms: [
-        .iOS(.v14),
+        .iOS(.v15),
         .macOS(.v11),
     ],
     products: [
@@ -15,7 +15,7 @@ let package = Package(
             targets: ["Panorama"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/jonaszell97/Toolbox.git", from: "0.1.0"),
+        .package(url: "/Users/jonaszell/Developer/Toolbox", branch: "dev"),
     ],
     targets: [
         .target(

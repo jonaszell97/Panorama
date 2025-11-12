@@ -76,7 +76,7 @@ public struct ProgressBar: View {
     }
 }
 
-@available(iOS 15, *)
+@available(iOS 15, macOS 12, *)
 struct ProgressBar_Previewsss: PreviewProvider {
     struct PreviewView: View {
         @State var progress: Double = 0

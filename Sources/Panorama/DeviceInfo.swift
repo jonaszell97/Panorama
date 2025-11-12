@@ -51,7 +51,20 @@ public enum DeviceModel: String, CaseIterable {
          iPhone14 = "iPhone 14",
          iPhone14Plus = "iPhone 14 Plus",
          iPhone14Pro = "iPhone 14 Pro",
-         iPhone14ProMax = "iPhone 14 Pro Max"
+         iPhone14ProMax = "iPhone 14 Pro Max",
+         iPhone15 = "iPhone 15",
+         iPhone15Plus = "iPhone 15 Plus",
+         iPhone15Pro = "iPhone 15 Pro",
+         iPhone15ProMax = "iPhone 15 Pro Max",
+         iPhone16 = "iPhone 16",
+         iPhone16Plus = "iPhone 16 Plus",
+         iPhone16Pro = "iPhone 16 Pro",
+         iPhone16ProMax = "iPhone 16 Pro Max",
+         iPhone16e = "iPhone 16e",
+         iPhone17 = "iPhone 17",
+         iPhoneAir = "iPhone Air",
+         iPhone17Pro = "iPhone 17 Pro",
+         iPhone17ProMax = "iPhone 17 Pro Max"
     
     case simulator = "Simulator"
     case other = "Other"
@@ -72,6 +85,9 @@ public enum ScreenType: String, RawRepresentable, CaseIterable {
     case iPhone12ProMax = "iPhone 12 Pro Max"
     case iPhone14Pro = "iPhone 14 Pro"
     case iPhone14ProMax = "iPhone 14 Pro Max"
+    case iPhone16Pro = "iPhone 16 Pro"
+    case iPhone16ProMax = "iPhone 16 Pro Max"
+    case iPhoneAir = "iPhone Air"
     case other = "Other"
     
     /// Whether or not this screen type is an iPhone 5 or smaller.
@@ -108,8 +124,8 @@ public func getMacModelIdentifier() -> String? {
 
 #if canImport(UIKit)
 public extension UIDevice {
-    static var uuidString: String? {
-        current.identifierForVendor?.uuidString
+    static var currentDeviceIdentifier: String {
+        current.identifierForVendor?.uuidString ?? deviceIdentifier
     }
     
     /// The unique device model identifier, e.g. `iPhone13,1` for the iPhone 12 mini.
@@ -190,10 +206,24 @@ public extension UIDevice {
         case "iPhone14,2":                              return .iPhone13Pro
         case "iPhone14,3":                              return .iPhone13ProMax
         case "iPhone14,6":                              return .iPhoneSE3
-        case "iPhone14,7":                              return .iPhone14
-        case "iPhone14,8":                              return .iPhone14Plus
+        case "iPhone14,7", "iPhone14,1":                return .iPhone14
+        case "iPhone14,8", "iPhone14,9":                return .iPhone14Plus
         case "iPhone15,2":                              return .iPhone14Pro
         case "iPhone15,3":                              return .iPhone14ProMax
+        case "iPhone15,4":                              return .iPhone15
+        case "iPhone15,5":                              return .iPhone15Plus
+        case "iPhone16,1":                              return .iPhone15Pro
+        case "iPhone16,2":                              return .iPhone15ProMax
+        case "iPhone17,3":                              return .iPhone16
+        case "iPhone17,4":                              return .iPhone16Plus
+        case "iPhone17,1":                              return .iPhone16Pro
+        case "iPhone17,2":                              return .iPhone16ProMax
+        case "iPhone17,5":                              return .iPhone16e
+        case "iPhone18,1":                              return .iPhone17Pro
+        case "iPhone18,2":                              return .iPhone17ProMax
+        case "iPhone18,3":                              return .iPhone17
+        case "iPhone18,4":                              return .iPhoneAir
+            
         case "i386", "x86_64", "arm64":                 return Self.simulatorDeviceModel()
         default:                                        return .other
         }
@@ -299,6 +329,14 @@ public extension DeviceModel {
         case .iPhone14Pro:
             fallthrough
         case .iPhone14ProMax:
+            fallthrough
+        case .iPhone15Pro:
+            fallthrough
+        case .iPhone15ProMax:
+            fallthrough
+        case .iPhone16Pro:
+            fallthrough
+        case .iPhone16ProMax:
             return true
         default:
             return false
@@ -371,177 +409,9 @@ public extension DeviceModel {
     
     /// Whether or not this is an expensive phone.
     var isExpensiveDevice: Bool {
-        switch self {
-        case .iPhone12Pro:
-            fallthrough
-        case .iPhone12ProMax:
-            fallthrough
-        case .iPhone13Pro:
-            fallthrough
-        case .iPhone13ProMax:
-            fallthrough
-        case .iPhone14Pro:
-            fallthrough
-        case .iPhone14ProMax:
-            return true
-        default:
-            return false
-        }
+        rawValue.contains("Pro")
     }
     
-    /// Whether this device has an OLED screen.
-    var hasSuperRetinaDisplay: Bool {
-        switch self {
-        case .iPodTouch5:
-            fallthrough
-        case .iPodTouch6:
-            fallthrough
-        case .iPodTouch7:
-            fallthrough
-        case .iPhone4:
-            fallthrough
-        case .iPhone4s:
-            fallthrough
-        case .iPhone5:
-            fallthrough
-        case .iPhone5c:
-            fallthrough
-        case .iPhone5s:
-            fallthrough
-        case .iPhone6:
-            fallthrough
-        case .iPhone6Plus:
-            fallthrough
-        case .iPhone6s:
-            fallthrough
-        case .iPhone6sPlus:
-            fallthrough
-        case .iPhoneSE:
-            fallthrough
-        case .iPhone7:
-            fallthrough
-        case .iPhone7Plus:
-            fallthrough
-        case .iPhone8:
-            fallthrough
-        case .iPhone8Plus:
-            fallthrough
-        case .iPhoneXR:
-            fallthrough
-        case .iPhone11:
-            fallthrough
-        case .iPhoneSE2:
-            fallthrough
-        case .iPhoneSE3:
-            fallthrough
-        case .simulator:
-            fallthrough
-        case .other:
-            return false
-        case .iPhoneX:
-            fallthrough
-        case .iPhoneXS:
-            fallthrough
-        case .iPhoneXSMax:
-            fallthrough
-        case .iPhone11Pro:
-            fallthrough
-        case .iPhone11ProMax:
-            fallthrough
-        case .iPhone12mini:
-            fallthrough
-        case .iPhone12:
-            fallthrough
-        case .iPhone12Pro:
-            fallthrough
-        case .iPhone12ProMax:
-            fallthrough
-        case .iPhone13mini:
-            fallthrough
-        case .iPhone13:
-            fallthrough
-        case .iPhone13Pro:
-            fallthrough
-        case .iPhone13ProMax:
-            fallthrough
-        case .iPhone14:
-            fallthrough
-        case .iPhone14Plus:
-            fallthrough
-        case .iPhone14Pro:
-            fallthrough
-        case .iPhone14ProMax:
-            return true
-        }
-    }
-    
-    /// Whether this device has an XDR display.
-    var hasXDRDisplay: Bool {
-        switch self {
-        case .iPhone11Pro:
-            fallthrough
-        case .iPhone11ProMax:
-            fallthrough
-        case .iPhone12mini:
-            fallthrough
-        case .iPhone12:
-            fallthrough
-        case .iPhone12Pro:
-            fallthrough
-        case .iPhone12ProMax:
-            fallthrough
-        case .iPhone13mini:
-            fallthrough
-        case .iPhone13:
-            fallthrough
-        case .iPhone13Pro:
-            fallthrough
-        case .iPhone13ProMax:
-            fallthrough
-        case .iPhone14:
-            fallthrough
-        case .iPhone14Plus:
-            fallthrough
-        case .iPhone14Pro:
-            fallthrough
-        case .iPhone14ProMax:
-            return true
-        default:
-            return false
-        }
-    }
-    
-    /// Whether or not this device has a small screen.
-    var hasSmallScreen: Bool {
-        switch self {
-        case .iPodTouch5:
-            fallthrough
-        case .iPodTouch6:
-            fallthrough
-        case .iPodTouch7:
-            fallthrough
-        case .iPhone4:
-            fallthrough
-        case .iPhone4s:
-            fallthrough
-        case .iPhone5:
-            fallthrough
-        case .iPhone5s:
-            fallthrough
-        case .iPhone5c:
-            fallthrough
-        case .iPhoneSE:
-            return true
-        case .simulator:
-            #if canImport(UIKit)
-            return UIScreen.main.bounds.width.isEqual(to: 320)
-            #elseif canImport(AppKit)
-            return NSScreen.main?.frame.width.isEqual(to: 320) ?? false
-            #endif
-        default:
-            return false
-        }
-    }
     
     /// The screen type of this device.
     var screenType: ScreenType {
@@ -613,6 +483,12 @@ public extension DeviceModel {
         case .iPhone14:
             return .iPhone12
         case .iPhone14Pro:
+            fallthrough
+        case .iPhone15:
+            fallthrough
+        case .iPhone15Pro:
+            fallthrough
+        case .iPhone16:
             return .iPhone14Pro
         case .iPhone12ProMax:
             fallthrough
@@ -621,11 +497,56 @@ public extension DeviceModel {
         case .iPhone14Plus:
             return .iPhone12ProMax
         case .iPhone14ProMax:
+            fallthrough
+        case .iPhone15Plus:
+            fallthrough
+        case .iPhone15ProMax:
+            fallthrough
+        case .iPhone16Plus:
             return .iPhone14ProMax
+        case .iPhone16Pro:
+            fallthrough
+        case .iPhone17:
+            fallthrough
+        case .iPhone17Pro:
+            return .iPhone16Pro
+        case .iPhone16ProMax:
+            fallthrough
+        case .iPhone17ProMax:
+            return .iPhone16ProMax
+        case .iPhone16e:
+            return .iPhone12
+        case .iPhoneAir:
+            return .iPhoneAir
         case .simulator:
             fallthrough
         case .other:
             return .other
+        }
+    }
+    
+    /// Whether this device has an OLED screen.
+    var hasSuperRetinaDisplay: Bool {
+        self.screenType.scalingFactor?.isEqual(to: 3) ?? false
+    }
+    
+    /// Whether or not this device has a small screen.
+    var hasSmallScreen: Bool {
+        if case .simulator = self {
+#if canImport(UIKit)
+            return UIScreen.main.bounds.width.isEqual(to: 320)
+#elseif canImport(AppKit)
+            return NSScreen.main?.frame.width.isEqual(to: 320) ?? false
+#endif
+        }
+        
+        switch self.screenType {
+        case .iPhone4:
+            fallthrough
+        case .iPhone5:
+            return true
+        default:
+            return false
         }
     }
     
@@ -656,7 +577,23 @@ public extension ScreenType {
             return 55
         case .iPhone14ProMax:
             return 55
-        default:
+        case .iPhone16Pro:
+            return 55
+        case .iPhone16ProMax:
+            return 55
+        case .iPhoneAir:
+            return 55
+        case .iPhone4:
+            fallthrough
+        case .iPhone5:
+            fallthrough
+        case .iPhone6:
+            fallthrough
+        case .iPhone6Plus:
+            fallthrough
+        case .iPhone8Plus:
+            fallthrough
+        case .other:
             return 0
         }
     }
@@ -691,6 +628,12 @@ public extension ScreenType {
             return (width: 393, height: 852)
         case .iPhone14ProMax:
             return (width: 430, height: 932)
+        case .iPhone16Pro:
+            return (width: 402, height: 874)
+        case .iPhone16ProMax:
+            return (width: 440, height: 956)
+        case .iPhoneAir:
+            return (width: 420, height: 912)
         case .other:
             return nil
         }
@@ -725,6 +668,12 @@ public extension ScreenType {
             return 3
         case .iPhone14ProMax:
             return 3
+        case .iPhone16Pro:
+            return 3
+        case .iPhone16ProMax:
+            return 3
+        case .iPhoneAir:
+            return 3
         case .other:
             return nil
         }
@@ -749,7 +698,23 @@ public extension ScreenType {
             return EdgeInsets(top: 59, leading: 0, bottom: 34, trailing: 0)
         case .iPhone14ProMax:
             return EdgeInsets(top: 59, leading: 0, bottom: 34, trailing: 0)
-        default:
+        case .iPhone16Pro:
+            return EdgeInsets(top: 62, leading: 0, bottom: 34, trailing: 0)
+        case .iPhone16ProMax:
+            return EdgeInsets(top: 62, leading: 0, bottom: 34, trailing: 0)
+        case .iPhoneAir:
+            return EdgeInsets(top: 68, leading: 0, bottom: 34, trailing: 0)
+        case .iPhone4:
+            fallthrough
+        case .iPhone5:
+            fallthrough
+        case .iPhone6:
+            fallthrough
+        case .iPhone6Plus:
+            fallthrough
+        case .iPhone8Plus:
+            fallthrough
+        case .other:
             return EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
         }
     }

@@ -2,6 +2,207 @@
 import SwiftUI
 import Toolbox
 
+fileprivate func staticDigitView(digit: Int?) -> some View {
+    Text(verbatim: FormatToolbox.format(digit ?? 0))
+        .opacity(digit == nil ? 0 : 1)
+}
+
+fileprivate func animatedDigitView(digit: Int?, offset: Double, nextDigit: Int?,
+                                   height: CGFloat, direction: AnimatedDigitView.Direction = .decreasing) -> some View {
+    let startDigit = digit
+    let endDigit = nextDigit
+    let multiplier: CGFloat = direction == .increasing ? -1 : 1
+    
+    return ZStack {
+        if startDigit == nil {
+            Text(verbatim: FormatToolbox.format(startDigit ?? 0))
+                .opacity(0)
+                .offset(x: 0, y: offset * multiplier)
+        }
+        else {
+            Text(verbatim: FormatToolbox.format(startDigit ?? 0))
+                .opacity(1 - abs(offset / height))
+                .offset(x: 0, y: offset * multiplier)
+        }
+        
+        if endDigit == nil {
+            Text(verbatim: FormatToolbox.format(endDigit ?? 0))
+                .opacity(0)
+                .offset(x: 0, y: (-height + offset) * multiplier)
+        }
+        else {
+            Text(verbatim: FormatToolbox.format(endDigit ?? 0))
+                .opacity(abs(offset / height))
+                .offset(x: 0, y: (-height + offset) * multiplier)
+        }
+    }
+    .transition(.identity)
+}
+
+/// A view that counts up or down from one digit to another with a slot-machine style animation.
+public struct AnimatedDigitView: View {
+    /// The moving direction.
+    public enum Direction: String {
+        case decreasing
+        case increasing
+        case closest
+    }
+    
+    /// The starting value of the counter.
+    let startDigit: Int
+    
+    /// The ending value of the counter.
+    let endDigit: Int
+    
+    /// The direction of the move.
+    let direction: Direction
+    
+    /// The font size to use.
+    let height: CGFloat
+    
+    /// The animation duration.
+    let animationDuration: Double
+    
+    /// The animation delay.
+    let animationDelay: Double
+    
+    /// Animation completion callback.
+    let onAnimationComplete: Optional<() -> Void>
+    
+    /// The active digit animations.
+    @State var displayDigit: Int?
+    
+    /// The active digit animations.
+    @State var digitAnimation: (Double, Int?)?
+    
+    /// The actual direction.
+    @State var finalDirection: Direction = .increasing
+    
+    /// Memberwise initializer
+    public init(startDigit: Int, endDigit: Int, direction: Direction,
+                height: CGFloat, animationDuration: Double,
+                animationDelay: Double,
+                onAnimationComplete: Optional<() -> Void> = nil) {
+        self.startDigit = startDigit
+        self.endDigit = endDigit
+        self.direction = direction
+        self.height = height
+        self.animationDuration = animationDuration
+        self.animationDelay = animationDelay
+        self.onAnimationComplete = onAnimationComplete
+        self._displayDigit = .init(initialValue: nil)
+        self._digitAnimation = .init(initialValue: nil)
+    }
+    
+    func startAnimation() {
+        let numberOfSteps: Int
+        let direction: Direction
+        
+        switch self.direction {
+        case .decreasing:
+            if endDigit <= startDigit {
+                numberOfSteps = startDigit - endDigit
+            }
+            else {
+                numberOfSteps = 10 - (endDigit - startDigit)
+            }
+            direction = .decreasing
+        case .increasing:
+            if endDigit >= startDigit {
+                numberOfSteps = endDigit - startDigit
+            }
+            else {
+                numberOfSteps = 10 - (startDigit - endDigit)
+            }
+            direction = .increasing
+        case .closest:
+            let stepsIncreasing, stepsDecreasing: Int
+            if endDigit <= startDigit {
+                stepsDecreasing = startDigit - endDigit
+                stepsIncreasing = 10 - (startDigit - endDigit)
+            }
+            else {
+                stepsDecreasing = 10 - (endDigit - startDigit)
+                stepsIncreasing = endDigit - startDigit
+            }
+            
+            if stepsIncreasing > stepsDecreasing {
+                direction = .decreasing
+                numberOfSteps = stepsDecreasing
+            }
+            else {
+                direction = .increasing
+                numberOfSteps = stepsIncreasing
+            }
+        }
+        
+        let singleStepDuration = animationDuration / Double(numberOfSteps)
+        var delay = animationDelay
+        
+        let sequence = AnimationSequence()
+        var currentDigit = startDigit
+        
+        while currentDigit != endDigit {
+            let nextDigit: Int
+            switch direction {
+            case .decreasing:
+                if currentDigit == 0 {
+                    nextDigit = 9
+                }
+                else {
+                    nextDigit = currentDigit - 1
+                }
+            case .increasing:
+                nextDigit = (currentDigit + 1) % 10
+            case .closest:
+                fatalError("direction should have been set")
+            }
+            
+            sequence.append(delay: delay) {
+                self.digitAnimation = (0, nextDigit)
+            }
+            
+            sequence.append(animation: .linear(duration: singleStepDuration),
+                            duration: singleStepDuration) {
+                self.digitAnimation = (Double(height), nextDigit)
+            }
+            
+            sequence.append {
+                self.displayDigit = nextDigit
+                self.digitAnimation = nil
+            }
+            
+            delay = 0
+            currentDigit = nextDigit
+        }
+        
+        self.displayDigit = startDigit
+        self.finalDirection = direction
+        
+        sequence.append {
+            self.onAnimationComplete?()
+        }
+        
+        sequence.execute()
+    }
+    
+    public var body: some View {
+        ZStack {
+            if let (rotationAngle, nextDigit) = digitAnimation {
+                animatedDigitView(digit: displayDigit, offset: rotationAngle, nextDigit: nextDigit,
+                                  height: height, direction: finalDirection)
+            }
+            else {
+                staticDigitView(digit: displayDigit)
+            }
+        }
+        .clipShape(Rectangle())
+        .onAppear {
+            self.startAnimation()
+        }
+    }
+}
+
 /// A view that counts up or down from one number to another with a slot-machine style animation
 ///
 /// `CounterView` displays the current count as a horizontal stack of digits. Digit changes are animated
@@ -27,10 +228,7 @@ public struct CounterView: View {
     let endValue: Int
     
     /// The font size to use.
-    let fontSize: CGFloat
-    
-    /// The font color to use.
-    let fontColor: Color
+    let height: CGFloat
     
     /// The animation duration.
     let animationDuration: Double
@@ -65,14 +263,13 @@ public struct CounterView: View {
     ///   - animationDelay: The delay of the counting animation.
     ///   - onAnimationComplete: Callback to invoke once the animation completes.
     public init(startValue: Int, endValue: Int,
-                fontSize: CGFloat, fontColor: Color,
+                height: CGFloat,
                 animationDuration: Double? = nil,
                 animationDelay: Double = 0,
                 onAnimationComplete: Optional<() -> Void> = nil) {
         self.startValue = startValue
         self.endValue = endValue
-        self.fontSize = fontSize
-        self.fontColor = fontColor
+        self.height = height
         self.onAnimationComplete = onAnimationComplete
         self.animationDuration = animationDuration ?? Self.defaultAnimationDuration(startValue: startValue, endValue: endValue)
         self.animationDelay = animationDelay
@@ -110,51 +307,6 @@ public struct CounterView: View {
         default:
             return 2
         }
-    }
-    
-    func staticDigitView(digit: Int?) -> some View {
-        Text(verbatim: FormatToolbox.format(digit ?? 0))
-            .font(.system(size: fontSize).monospacedDigit())
-            .foregroundColor(fontColor)
-            .opacity(digit == nil ? 0 : 1)
-    }
-    
-    func animatedDigitView(digit: Int?, offset: Double, nextDigit: Int?) -> some View {
-        let startDigit = digit
-        let endDigit = nextDigit
-        
-        return ZStack {
-            if startDigit == nil {
-                Text(verbatim: FormatToolbox.format(startDigit ?? 0))
-                    .font(.system(size: fontSize).monospacedDigit())
-                    .foregroundColor(fontColor)
-                    .opacity(0)
-                    .offset(x: 0, y: offset)
-            }
-            else {
-                Text(verbatim: FormatToolbox.format(startDigit ?? 0))
-                    .font(.system(size: fontSize).monospacedDigit())
-                    .foregroundColor(fontColor)
-                    .opacity(1 - abs(offset / fontSize))
-                    .offset(x: 0, y: offset)
-            }
-            
-            if endDigit == nil {
-                Text(verbatim: FormatToolbox.format(endDigit ?? 0))
-                    .font(.system(size: fontSize).monospacedDigit())
-                    .foregroundColor(fontColor)
-                    .opacity(0)
-                    .offset(x: 0, y: -fontSize + offset)
-            }
-            else {
-                Text(verbatim: FormatToolbox.format(endDigit ?? 0))
-                    .font(.system(size: fontSize).monospacedDigit())
-                    .foregroundColor(fontColor)
-                    .opacity(abs(offset / fontSize))
-                    .offset(x: 0, y: -fontSize + offset)
-            }
-        }
-        .transition(.identity)
     }
     
     func startAnimation() {
@@ -248,7 +400,7 @@ public struct CounterView: View {
                     
                     sequence.append(animation: .linear(duration: singleStepDuration),
                                     duration: singleStepDuration) {
-                        self.digitAnimations[digitPosition] = (Double(fontSize), nextDigit)
+                        self.digitAnimations[digitPosition] = (Double(height), nextDigit)
                     }
                     
                     sequence.append {
@@ -280,7 +432,8 @@ public struct CounterView: View {
         HStack(spacing: 0) {
             ForEach(0..<displayDigits.count, id: \.self) { i in
                 if let (rotationAngle, nextDigit) = digitAnimations[i] {
-                    animatedDigitView(digit: displayDigits[i], offset: rotationAngle, nextDigit: nextDigit)
+                    animatedDigitView(digit: displayDigits[i], offset: rotationAngle, nextDigit: nextDigit,
+                                      height: height)
                 }
                 else {
                     staticDigitView(digit: displayDigits[i])
@@ -296,6 +449,22 @@ public struct CounterView: View {
 
 struct CounterView_Previews: PreviewProvider {
     static var previews: some View {
-        CounterView(startValue: 1050, endValue: 950, fontSize: 50, fontColor: .black)
+        VStack {
+            CounterView(startValue: 1050, endValue: 950, height: 50)
+            
+            AnimatedDigitView(startDigit: 9, endDigit: 5, direction: .decreasing,
+                              height: 50, animationDuration: 2,
+                              animationDelay: 0)
+            
+            AnimatedDigitView(startDigit: 9, endDigit: 5, direction: .increasing,
+                              height: 50, animationDuration: 2,
+                              animationDelay: 0)
+            
+            AnimatedDigitView(startDigit: 5, endDigit: 7, direction: .decreasing,
+                              height: 50, animationDuration: 2,
+                              animationDelay: 0)
+        }
+        .font(.system(size: 50).monospacedDigit())
+        .foregroundColor(.black)
     }
 }

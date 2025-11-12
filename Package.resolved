@@ -2,11 +2,11 @@
   "pins" : [
     {
       "identity" : "toolbox",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/jonaszell97/Toolbox.git",
+      "kind" : "localSourceControl",
+      "location" : "/Users/jonaszell/Developer/Toolbox",
       "state" : {
-        "revision" : "0f002e3b30436e6afbc7cf83b093554fb6d80f15",
-        "version" : "0.5.0"
+        "branch" : "dev",
+        "revision" : "0d38c1ced3b24c97f151b4ee390a81044a8ed529"
       }
     }
   ],
