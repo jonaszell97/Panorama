@@ -77,13 +77,32 @@ public class AnimationSequence {
     
     /// Whether this sequence was ever started.
     private var didStartExecution: Bool = false
-    
+
+    /// Runs a step after a delay. Steps are scheduled on the main queue unless
+    /// the caller supplies its own scheduler, e.g. to drive a sequence from a
+    /// test clock.
+    private let schedule: (TimeInterval, @escaping () -> Void) -> Void
+
+    /// The default scheduler: the main queue, without a deadline for zero delays.
+    public static let mainQueue: (TimeInterval, @escaping () -> Void) -> Void = { delay, work in
+        if delay.isZero {
+            DispatchQueue.main.async(execute: work)
+        }
+        else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay, execute: work)
+        }
+    }
+
     /// Create an animation sequence. Actions can be specified here or added later.
     ///
-    /// - Parameter actions: The actions in the sequence.
-    public init(actions: [AnimationSequence.AnimationSequenceAction] = []) {
+    /// - Parameters:
+    ///   - actions: The actions in the sequence.
+    ///   - schedule: Runs a step after the given delay. Defaults to the main queue.
+    public init(actions: [AnimationSequence.AnimationSequenceAction] = [],
+                schedule: @escaping (TimeInterval, @escaping () -> Void) -> Void = AnimationSequence.mainQueue) {
         self.actions = actions
         self.totalDuration = 0
+        self.schedule = schedule
     }
     
     deinit {
@@ -152,18 +171,10 @@ public class AnimationSequence {
             return 0
         }
         
-        let action = actions[0]
-        if action.delay.isZero {
-            DispatchQueue.main.async {
-                self.execute(at: 0)
-            }
+        schedule(actions[0].delay) {
+            self.execute(at: 0)
         }
-        else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + action.delay) {
-                self.execute(at: 0)
-            }
-        }
-        
+
         return totalDuration
     }
     
@@ -202,8 +213,8 @@ public class AnimationSequence {
         }
         
         self.stopped = true
-        
-        DispatchQueue.main.async {
+
+        schedule(0) {
             self.execute(at: index, force: true)
         }
     }
@@ -234,16 +245,8 @@ public class AnimationSequence {
             return
         }
         
-        let delay = action.duration + actions[index + 1].delay
-        if delay.isZero {
-            DispatchQueue.main.async {
-                self.execute(at: index + 1, force: force)
-            }
-        }
-        else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                self.execute(at: index + 1, force: force)
-            }
+        schedule(action.duration + actions[index + 1].delay) {
+            self.execute(at: index + 1, force: force)
         }
     }
 }
