@@ -94,11 +94,17 @@ public extension View {
     ///   - action: A closure to run when the value changes or the view appears.
     ///
     /// - Returns: A view that fires an action when the specified value changes or when it appears.
+    @ViewBuilder
     func onAppearOrChange<T>(of value: T, perform action: @escaping (T) -> Void)
         -> some View where T: Equatable
     {
-        self.onAppear { action(value) }
-            .onChange(of: value) { action($0) }
+        if #available(iOS 17, macOS 14, *) {
+            self.onChange(of: value, initial: true) { _, newValue in action(newValue) }
+        }
+        else {
+            self.onAppear { action(value) }
+                .onChange(of: value) { action($0) }
+        }
     }
 }
 
